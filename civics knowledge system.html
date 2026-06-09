@@ -1,0 +1,3746 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>分科測驗公民完全知識庫 2024–2026</title>
+<style>
+  :root {
+    --red: #c0392b;
+    --red-light: #fadbd8;
+    --blue: #1a5276;
+    --blue-light: #d6eaf8;
+    --blue-mid: #2980b9;
+    --black: #1c1c1c;
+    --grey: #5d6d7e;
+    --grey-light: #f2f3f4;
+    --white: #ffffff;
+    --gold: #b7950b;
+    --gold-light: #fef9e7;
+    --green: #1e8449;
+    --green-light: #d5f5e3;
+    --border: #d5d8dc;
+    --sidebar-w: 280px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Noto Sans TC', 'Microsoft JhengHei', sans-serif; background: #f8f9fa; color: var(--black); font-size: 15px; line-height: 1.7; }
+
+  /* TOP BAR */
+  #topbar {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+    background: var(--blue); color: white;
+    display: flex; align-items: center; padding: 0 20px; height: 56px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    gap: 16px;
+  }
+  #topbar h1 { font-size: 17px; font-weight: 700; flex: 1; white-space: nowrap; }
+  #topbar span { font-size: 12px; opacity: 0.75; white-space: nowrap; }
+  #search-box {
+    display: flex; align-items: center; gap: 8px;
+    background: rgba(255,255,255,0.15); border-radius: 24px;
+    padding: 6px 14px; flex: 0 0 320px;
+  }
+  #search-box input {
+    background: none; border: none; color: white; font-size: 14px;
+    outline: none; width: 100%;
+  }
+  #search-box input::placeholder { color: rgba(255,255,255,0.6); }
+  #search-icon { opacity: 0.8; font-size: 16px; }
+  #search-results {
+    position: fixed; top: 56px; right: 20px;
+    background: white; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    max-width: 420px; max-height: 60vh; overflow-y: auto;
+    display: none; z-index: 999;
+  }
+  #search-results.show { display: block; }
+  .sr-item {
+    padding: 12px 16px; border-bottom: 1px solid var(--border); cursor: pointer;
+    transition: background 0.15s;
+  }
+  .sr-item:hover { background: var(--blue-light); }
+  .sr-item .sr-tag { font-size: 11px; color: var(--blue-mid); font-weight: 700; margin-bottom: 2px; }
+  .sr-item .sr-title { font-size: 14px; color: var(--black); font-weight: 600; }
+  .sr-item .sr-snippet { font-size: 12px; color: var(--grey); margin-top: 2px; }
+  .sr-highlight { background: #fff176; border-radius: 2px; }
+  #search-count { padding: 8px 16px; font-size: 12px; color: var(--grey); border-bottom: 1px solid var(--border); }
+
+  /* LAYOUT */
+  #wrapper { display: flex; margin-top: 56px; }
+
+  /* SIDEBAR */
+  #sidebar {
+    position: fixed; left: 0; top: 56px; bottom: 0;
+    width: var(--sidebar-w); background: #1c2833; color: #ecf0f1;
+    overflow-y: auto; z-index: 900;
+    scrollbar-width: thin; scrollbar-color: #34495e #1c2833;
+  }
+  #sidebar::-webkit-scrollbar { width: 4px; }
+  #sidebar::-webkit-scrollbar-track { background: #1c2833; }
+  #sidebar::-webkit-scrollbar-thumb { background: #34495e; border-radius: 2px; }
+  .sb-section {
+    border-bottom: 1px solid #2c3e50;
+  }
+  .sb-section-title {
+    padding: 12px 16px; font-size: 11px; font-weight: 700; letter-spacing: 1px;
+    text-transform: uppercase; color: #7fb3d3; cursor: pointer;
+    display: flex; align-items: center; justify-content: space-between;
+    user-select: none;
+  }
+  .sb-section-title:hover { background: rgba(255,255,255,0.05); }
+  .sb-items { display: none; }
+  .sb-items.open { display: block; }
+  .sb-item {
+    padding: 8px 16px 8px 24px; font-size: 13px; color: #bdc3c7;
+    cursor: pointer; transition: all 0.15s;
+    border-left: 3px solid transparent;
+  }
+  .sb-item:hover { background: rgba(255,255,255,0.08); color: white; }
+  .sb-item.active { background: rgba(41,128,185,0.2); border-left-color: var(--blue-mid); color: white; }
+  .sb-sub {
+    padding: 5px 16px 5px 36px; font-size: 12px; color: #95a5a6;
+    cursor: pointer; transition: all 0.15s;
+  }
+  .sb-sub:hover { color: #bdc3c7; }
+
+  /* MAIN CONTENT */
+  #main {
+    margin-left: var(--sidebar-w); flex: 1; padding: 24px 32px; max-width: 1100px;
+  }
+  .page { display: none; }
+  .page.active { display: block; animation: fadeIn 0.25s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* SECTION HEADERS */
+  .book-title {
+    background: var(--blue); color: white; padding: 20px 28px; border-radius: 12px 12px 0 0;
+    margin-bottom: 0;
+  }
+  .book-title h2 { font-size: 22px; font-weight: 800; }
+  .book-title p { font-size: 13px; opacity: 0.8; margin-top: 4px; }
+  .book-badge {
+    display: inline-block; background: rgba(255,255,255,0.2); border-radius: 20px;
+    padding: 2px 12px; font-size: 11px; margin-right: 8px;
+  }
+
+  .lesson-block {
+    background: white; border-radius: 0 0 12px 12px; border: 1px solid var(--border);
+    border-top: none; margin-bottom: 28px; overflow: hidden;
+  }
+  .lesson-block + .book-title { border-radius: 12px 12px 0 0; margin-top: 24px; }
+
+  .lesson-header {
+    background: var(--grey-light); padding: 14px 24px;
+    border-bottom: 2px solid var(--border);
+    display: flex; align-items: center; gap: 12px; cursor: pointer;
+    user-select: none;
+  }
+  .lesson-header:hover { background: #e8ecef; }
+  .lesson-num {
+    background: var(--blue); color: white; border-radius: 50%;
+    width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 700; flex-shrink: 0;
+  }
+  .lesson-header h3 { font-size: 17px; font-weight: 700; flex: 1; }
+  .lesson-header .caret { font-size: 12px; color: var(--grey); transition: transform 0.2s; }
+  .lesson-header.open .caret { transform: rotate(180deg); }
+  .lesson-body { padding: 0 24px 20px; display: none; }
+  .lesson-body.open { display: block; }
+
+  /* CONTENT ELEMENTS */
+  h4 { font-size: 15px; color: var(--blue); font-weight: 700; margin: 20px 0 8px;
+    padding-left: 10px; border-left: 3px solid var(--blue-mid); }
+  h5 { font-size: 14px; color: var(--red); font-weight: 700; margin: 14px 0 6px; }
+
+  /* COLOR TAGS */
+  .red { color: var(--red); font-weight: 700; }
+  .blue { color: var(--blue); font-weight: 700; }
+  .bold { font-weight: 700; }
+  .underline { text-decoration: underline; text-underline-offset: 3px; }
+
+  /* BOXES */
+  .box {
+    border-radius: 8px; padding: 14px 18px; margin: 12px 0; font-size: 14px;
+  }
+  .box-red { background: var(--red-light); border-left: 4px solid var(--red); }
+  .box-blue { background: var(--blue-light); border-left: 4px solid var(--blue-mid); }
+  .box-gold { background: var(--gold-light); border-left: 4px solid var(--gold); }
+  .box-green { background: var(--green-light); border-left: 4px solid var(--green); }
+  .box-grey { background: var(--grey-light); border-left: 4px solid var(--grey); }
+  .box-title { font-weight: 700; font-size: 13px; margin-bottom: 6px; letter-spacing: 0.5px; }
+  .box-red .box-title { color: var(--red); }
+  .box-blue .box-title { color: var(--blue); }
+  .box-gold .box-title { color: var(--gold); }
+  .box-green .box-title { color: var(--green); }
+
+  /* TABLE */
+  .tbl-wrap { overflow-x: auto; margin: 14px 0; border-radius: 8px; border: 1px solid var(--border); }
+  table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  th {
+    background: var(--blue); color: white; padding: 10px 14px; text-align: left;
+    font-weight: 700; font-size: 13px;
+  }
+  td { padding: 9px 14px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  tr:nth-child(even) td { background: #f7faff; }
+  td.red-cell { color: var(--red); font-weight: 700; }
+  td.blue-cell { color: var(--blue); font-weight: 600; }
+  .tbl-caption { font-size: 12px; color: var(--grey); text-align: center; margin-top: 4px; }
+
+  /* LIST */
+  ul.content-list { list-style: none; padding-left: 0; margin: 8px 0; }
+  ul.content-list li { padding: 4px 0 4px 20px; position: relative; font-size: 14px; }
+  ul.content-list li::before { content: '▸'; position: absolute; left: 0; color: var(--blue-mid); font-size: 12px; top: 5px; }
+  ol.content-list { padding-left: 22px; margin: 8px 0; }
+  ol.content-list li { padding: 4px 0; font-size: 14px; }
+
+  /* MIND MAP STYLE */
+  .mindmap {
+    background: linear-gradient(135deg, #eaf4fb, #f0f4f8); border-radius: 12px;
+    padding: 20px; margin: 14px 0; position: relative;
+  }
+  .mindmap-center {
+    background: var(--blue); color: white; border-radius: 12px;
+    padding: 10px 20px; text-align: center; font-weight: 800; font-size: 15px;
+    display: inline-block; margin-bottom: 16px;
+  }
+  .mindmap-row { display: flex; flex-wrap: wrap; gap: 10px; margin: 4px 0; }
+  .mindmap-node {
+    background: white; border: 2px solid var(--blue-mid); border-radius: 8px;
+    padding: 8px 14px; font-size: 13px; font-weight: 600; color: var(--blue);
+    position: relative;
+  }
+  .mindmap-node.red { border-color: var(--red); color: var(--red); }
+  .mindmap-node.green { border-color: var(--green); color: var(--green); }
+  .mindmap-leaf {
+    background: var(--grey-light); border-radius: 6px; padding: 5px 10px;
+    font-size: 12px; color: var(--grey); display: inline-block; margin: 2px;
+  }
+
+  /* FLOW CHART */
+  .flow { display: flex; align-items: center; flex-wrap: wrap; gap: 4px; margin: 10px 0; }
+  .flow-step {
+    background: var(--blue); color: white; border-radius: 6px;
+    padding: 6px 12px; font-size: 13px; font-weight: 600;
+  }
+  .flow-step.red { background: var(--red); }
+  .flow-step.green { background: var(--green); }
+  .flow-step.gold { background: var(--gold); }
+  .flow-arrow { color: var(--grey); font-size: 18px; }
+
+  /* NEW LAW BADGE */
+  .new-badge {
+    display: inline-block; background: var(--red); color: white;
+    border-radius: 4px; padding: 1px 7px; font-size: 11px; font-weight: 700;
+    margin-left: 6px; vertical-align: middle;
+  }
+  .year-badge {
+    display: inline-block; background: var(--gold); color: white;
+    border-radius: 4px; padding: 1px 7px; font-size: 11px; font-weight: 700;
+    margin-left: 6px; vertical-align: middle;
+  }
+
+  /* EXAM ALERT */
+  .exam-alert {
+    background: #fff3cd; border: 1.5px solid #ffc107; border-radius: 8px;
+    padding: 12px 18px; margin: 12px 0; font-size: 13.5px;
+  }
+  .exam-alert::before { content: '⚠️ 考試重點：'; font-weight: 700; color: #856404; }
+
+  /* COMPARE TABLE */
+  .compare-hdr { background: var(--red); }
+
+  /* TAGS */
+  .tag {
+    display: inline-block; border-radius: 4px; padding: 1px 8px;
+    font-size: 11px; font-weight: 700; margin-right: 4px;
+  }
+  .tag-law { background: #e8f8f5; color: #1a8448; border: 1px solid #1a8448; }
+  .tag-econ { background: #fef9e7; color: #b7950b; border: 1px solid #b7950b; }
+  .tag-poli { background: #eaf4fb; color: #1a5276; border: 1px solid #1a5276; }
+  .tag-soc { background: #f5eef8; color: #7d3c98; border: 1px solid #7d3c98; }
+  .tag-new { background: #fdedec; color: #922b21; border: 1px solid #922b21; }
+
+  /* STATS BAR */
+  .stat-bar { display: flex; gap: 12px; flex-wrap: wrap; margin: 16px 0; }
+  .stat-chip {
+    background: var(--blue-light); border-radius: 8px; padding: 10px 16px;
+    text-align: center; flex: 1; min-width: 100px;
+  }
+  .stat-chip .num { font-size: 22px; font-weight: 800; color: var(--blue); }
+  .stat-chip .label { font-size: 11px; color: var(--grey); margin-top: 2px; }
+
+  /* HOMEPAGE */
+  .home-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; margin-top: 20px; }
+  .home-card {
+    background: white; border-radius: 12px; border: 1px solid var(--border);
+    padding: 20px; cursor: pointer; transition: all 0.2s;
+    border-top: 4px solid var(--blue);
+  }
+  .home-card:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,0.12); }
+  .home-card.red { border-top-color: var(--red); }
+  .home-card.green { border-top-color: var(--green); }
+  .home-card.gold { border-top-color: var(--gold); }
+  .home-card h3 { font-size: 15px; font-weight: 700; margin-bottom: 8px; }
+  .home-card p { font-size: 12px; color: var(--grey); line-height: 1.5; }
+  .home-card .chapters { margin-top: 10px; font-size: 12px; color: var(--blue-mid); font-weight: 600; }
+
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    #sidebar { transform: translateX(-100%); transition: transform 0.3s; }
+    #sidebar.mobile-open { transform: translateX(0); }
+    #main { margin-left: 0; padding: 16px; }
+    #search-box { flex: 0 0 200px; }
+    #topbar h1 { font-size: 14px; }
+  }
+
+  /* PROGRESS INDICATOR */
+  .section-progress {
+    display: flex; gap: 6px; flex-wrap: wrap; margin: 10px 0;
+  }
+  .sp-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--border); cursor: pointer; transition: background 0.15s;
+  }
+  .sp-dot.done { background: var(--blue-mid); }
+  .sp-dot.current { background: var(--red); }
+
+  hr.section-hr { border: none; border-top: 2px solid var(--border); margin: 20px 0; }
+
+  /* Print */
+  @media print {
+    #topbar, #sidebar { display: none; }
+    #main { margin-left: 0; }
+    .lesson-body { display: block !important; }
+  }
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div id="topbar">
+  <h1>📚 分科測驗公民完全知識庫</h1>
+  <span>2024–2026 最新版</span>
+  <div id="search-box">
+    <span id="search-icon">🔍</span>
+    <input type="text" id="search-input" placeholder="搜尋關鍵字，如：民主、憲法、供需…" autocomplete="off">
+  </div>
+</div>
+
+<!-- SEARCH RESULTS -->
+<div id="search-results">
+  <div id="search-count"></div>
+  <div id="search-list"></div>
+</div>
+
+<div id="wrapper">
+<!-- SIDEBAR -->
+<div id="sidebar">
+  <div class="sb-section">
+    <div class="sb-section-title" onclick="toggleSB('sb0')">🏠 首頁 / 考試說明</div>
+    <div class="sb-items open" id="sb0">
+      <div class="sb-item active" onclick="showPage('home')">分科測驗總覽</div>
+      <div class="sb-item" onclick="showPage('exam-info')">測驗目標與配分</div>
+    </div>
+  </div>
+  <div class="sb-section">
+    <div class="sb-section-title" onclick="toggleSB('sb1')">📘 必修：公民與社會（普高）</div>
+    <div class="sb-items open" id="sb1">
+      <div class="sb-item" onclick="showPage('bk1-law')">課本一：法律與社會 H</div>
+      <div class="sb-sub" onclick="showPage('bk1-law')">─ 社會規範與人權</div>
+      <div class="sb-sub" onclick="showPage('bk1-law')">─ 民主正當性與法律</div>
+      <div class="sb-sub" onclick="showPage('bk1-law')">─ 基本權利與憲政</div>
+      <div class="sb-sub" onclick="showPage('bk1-law')">─ 依法行政與救濟</div>
+      <div class="sb-sub" onclick="showPage('bk1-law')">─ 犯罪與刑罰</div>
+      <div class="sb-sub" onclick="showPage('bk1-law')">─ 政府資源分配</div>
+      <div class="sb-item" onclick="showPage('bk2-poli')">課本二：民主政治與社會 C/D</div>
+      <div class="sb-sub" onclick="showPage('bk2-poli')">─ 公民身份與國家主權</div>
+      <div class="sb-sub" onclick="showPage('bk2-poli')">─ 民主治理與公平正義</div>
+      <div class="sb-sub" onclick="showPage('bk2-poli')">─ 政府的組成</div>
+      <div class="sb-sub" onclick="showPage('bk2-poli')">─ 政治參與</div>
+      <div class="sb-sub" onclick="showPage('bk2-poli')">─ 公共意見與媒體</div>
+      <div class="sb-sub" onclick="showPage('bk2-poli')">─ 勞動參與及社會安全</div>
+      <div class="sb-sub" onclick="showPage('bk2-poli')">─ 多元文化與全球化</div>
+    </div>
+  </div>
+  <div class="sb-section">
+    <div class="sb-section-title" onclick="toggleSB('sb2')">📗 選修：現代社會與經濟 F</div>
+    <div class="sb-items open" id="sb2">
+      <div class="sb-item" onclick="showPage('econ1')">社會階層化 / 流動 / 運動 E</div>
+      <div class="sb-item" onclick="showPage('econ2')">市場交易 / 需求供給 B</div>
+      <div class="sb-item" onclick="showPage('econ3')">市場機能 / 政府介入 B</div>
+      <div class="sb-item" onclick="showPage('econ4')">物價膨脹 / GDP / 景氣 F</div>
+      <div class="sb-item" onclick="showPage('econ5')">可貸資金 / 貨幣政策 F</div>
+      <div class="sb-item" onclick="showPage('econ6')">國民所得 / 國際貿易 F</div>
+      <div class="sb-item" onclick="showPage('econ7')">私法自治 / 婚姻繼承 H</div>
+    </div>
+  </div>
+  <div class="sb-section">
+    <div class="sb-section-title" onclick="toggleSB('sb3')">📙 選修：民主政治與法律 G/H</div>
+    <div class="sb-items open" id="sb3">
+      <div class="sb-item" onclick="showPage('demo1')">民主政治的變遷與公民不服從 G</div>
+      <div class="sb-item" onclick="showPage('demo2')">中國政治與區域和平 G</div>
+      <div class="sb-item" onclick="showPage('demo3')">國際政治與世界秩序 G</div>
+      <div class="sb-item" onclick="showPage('demo4')">釋憲制度與人權保障 H</div>
+      <div class="sb-item" onclick="showPage('demo5')">行政行為與法律救濟 H</div>
+      <div class="sb-item" onclick="showPage('demo6')">民事關係與權利保障 H</div>
+      <div class="sb-item" onclick="showPage('demo7')">資訊生活與刑法 H</div>
+    </div>
+  </div>
+  <div class="sb-section">
+    <div class="sb-section-title" onclick="toggleSB('sb4')">📕 新法規 / 時事 2024–2026</div>
+    <div class="sb-items open" id="sb4">
+      <div class="sb-item" onclick="showPage('new-laws')">🔴 重大修法一覽</div>
+      <div class="sb-item" onclick="showPage('new-news')">📰 重要時事整理</div>
+    </div>
+  </div>
+  <div class="sb-section">
+    <div class="sb-section-title" onclick="toggleSB('sb6')">🌏 人權 · 國際關係 · 經濟深度</div>
+    <div class="sb-items open" id="sb6">
+      <div class="sb-item" onclick="showPage('human-rights')">🕊️ 人權：消極/積極/三代</div>
+      <div class="sb-sub" onclick="showPage('human-rights')">─ 第一/二/三代人權</div>
+      <div class="sb-sub" onclick="showPage('human-rights')">─ 國際人權公約完整表</div>
+      <div class="sb-item" onclick="showPage('taiwan-relations')">🌐 台灣國際關係</div>
+      <div class="sb-sub" onclick="showPage('taiwan-relations')">─ 台美關係・戰略模糊</div>
+      <div class="sb-sub" onclick="showPage('taiwan-relations')">─ 兩岸關係・九二共識</div>
+      <div class="sb-sub" onclick="showPage('taiwan-relations')">─ 邦交國・國際組織</div>
+      <div class="sb-item" onclick="showPage('election-systems')">🗳️ 選舉制度全比較</div>
+      <div class="sb-sub" onclick="showPage('election-systems')">─ FPTP/比例/混合制</div>
+      <div class="sb-sub" onclick="showPage('election-systems')">─ 台灣各選舉制度</div>
+      <div class="sb-sub" onclick="showPage('election-systems')">─ 罷免制度</div>
+      <div class="sb-item" onclick="showPage('media-law')">📡 媒體識讀・位階・地方政府</div>
+      <div class="sb-sub" onclick="showPage('media-law')">─ 六大媒體效果理論</div>
+      <div class="sb-sub" onclick="showPage('media-law')">─ 憲法/法律/命令位階</div>
+      <div class="sb-sub" onclick="showPage('media-law')">─ 中央地方政府權限</div>
+      <div class="sb-item" onclick="showPage('econ-deep')">💱 供需・進出口・匯率深度</div>
+      <div class="sb-sub" onclick="showPage('econ-deep')">─ 曲線移動完整判斷</div>
+      <div class="sb-sub" onclick="showPage('econ-deep')">─ 比較利益計算</div>
+      <div class="sb-sub" onclick="showPage('econ-deep')">─ 升值貶值全面分析</div>
+    </div>
+  </div>
+  <div class="sb-section">
+    <div class="sb-section-title" onclick="toggleSB('sb5')">🗺️ 快速比較 / 圖表</div>
+    <div class="sb-items open" id="sb5">
+      <div class="sb-item" onclick="showPage('compare-poli')">憲法架構 + 政府體制比較</div>
+      <div class="sb-sub" onclick="showPage('compare-poli')">─ 憲法三大支柱</div>
+      <div class="sb-sub" onclick="showPage('compare-poli')">─ 基本權利義務逐條</div>
+      <div class="sb-sub" onclick="showPage('compare-poli')">─ 五院職權完整比較</div>
+      <div class="sb-sub" onclick="showPage('compare-poli')">─ 中央地方關係</div>
+      <div class="sb-item" onclick="showPage('compare-law')">法律體系完全解析</div>
+      <div class="sb-sub" onclick="showPage('compare-law')">─ 行政法體系（組織/作用/救濟）</div>
+      <div class="sb-sub" onclick="showPage('compare-law')">─ 物權體系圖（所有/用益/擔保）</div>
+      <div class="sb-sub" onclick="showPage('compare-law')">─ 親等計算 + 繼承順序</div>
+      <div class="sb-sub" onclick="showPage('compare-law')">─ 代位 vs 本位繼承</div>
+      <div class="sb-sub" onclick="showPage('compare-law')">─ 時效完整比較（民/刑/行）</div>
+      <div class="sb-sub" onclick="showPage('compare-law')">─ 法律行為效力</div>
+      <div class="sb-item" onclick="showPage('compare-econ')">經濟指標速查</div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div id="main">
+
+<!-- ============================================================ HOME ============================================================ -->
+<div class="page active" id="page-home">
+  <div class="book-title">
+    <h2>🎓 分科測驗公民完全知識庫</h2>
+    <p>涵蓋必修 + 加深加廣選修全冊 ‧ 2024–2026 最新修法 ‧ 可全文搜尋</p>
+  </div>
+  <div class="lesson-block" style="border-radius:0 0 12px 12px; padding:24px;">
+    <div class="stat-bar">
+      <div class="stat-chip"><div class="num">8</div><div class="label">主題單元 A–H</div></div>
+      <div class="stat-chip"><div class="num">141</div><div class="label">建議節數</div></div>
+      <div class="stat-chip"><div class="num">70~80%</div><div class="label">選擇題配分</div></div>
+      <div class="stat-chip"><div class="num">20~30%</div><div class="label">非選擇題配分</div></div>
+    </div>
+
+    <div class="box box-gold">
+      <div class="box-title">📋 測驗範圍（來源：大考中心公布）</div>
+      必修：公民與社會（普高部分）<br>
+      加深加廣選修：①現代社會與經濟 ②民主政治與法律 ③探究與實作：公共議題與社會探究
+    </div>
+
+    <h4>八大主題分布（建議節數比例）</h4>
+    <div class="tbl-wrap">
+      <table>
+        <tr><th>類別</th><th>代碼</th><th>主題</th><th>節數</th><th>比重</th></tr>
+        <tr><td rowspan="4">必修</td><td>A</td><td>公民身份認同及社群</td><td>8</td><td>5.7%</td></tr>
+        <tr><td>B</td><td>社會生活的組織及制度</td><td>45</td><td>31.9%</td></tr>
+        <tr><td>C</td><td>社會的運作、治理及參與實踐</td><td>19</td><td>13.5%</td></tr>
+        <tr><td>D</td><td>民主社會的理想及現實</td><td>12</td><td>8.5%</td></tr>
+        <tr><td colspan="2" style="text-align:right;font-weight:700;">必修合計</td><td>84</td><td>59.6%</td></tr>
+        <tr><td rowspan="4">選修</td><td>E</td><td>社會不平等與社會運動</td><td>15</td><td>10.6%</td></tr>
+        <tr><td>F</td><td>景氣波動與經濟成長</td><td>12</td><td>8.5%</td></tr>
+        <tr><td>G</td><td>民主政治與世界秩序</td><td>15</td><td>10.6%</td></tr>
+        <tr><td>H</td><td>法律與社會生活</td><td>15</td><td>10.6%</td></tr>
+        <tr><td colspan="2" style="text-align:right;font-weight:700;">選修合計</td><td>57</td><td>40.4%</td></tr>
+        <tr><td colspan="2" style="text-align:right;font-weight:800;background:#eaf4fb;">總計</td><td style="font-weight:800;background:#eaf4fb;">141</td><td style="font-weight:800;background:#eaf4fb;">100%</td></tr>
+      </table>
+    </div>
+
+    <h4>點選下方模組開始複習</h4>
+    <div class="home-grid">
+      <div class="home-card" onclick="showPage('bk1-law')">
+        <h3>⚖️ 法律與社會 H</h3>
+        <p>社會規範、人權公約、憲法保障、刑事訴訟、行政救濟</p>
+        <div class="chapters">第一～六課</div>
+      </div>
+      <div class="home-card green" onclick="showPage('bk2-poli')">
+        <h3>🏛️ 民主政治 C/D</h3>
+        <p>公民身份、政府體制、選舉制度、媒體、勞動、全球化</p>
+        <div class="chapters">第一～七課</div>
+      </div>
+      <div class="home-card gold" onclick="showPage('econ1')">
+        <h3>📊 社會與經濟 E/F</h3>
+        <p>社會階層、市場機能、物價通膨、GDP、貨幣政策、國貿</p>
+        <div class="chapters">第一～六課</div>
+      </div>
+      <div class="home-card red" onclick="showPage('demo1')">
+        <h3>🌏 民主政治與法律 G/H</h3>
+        <p>民主變遷、中國政治、國際秩序、釋憲制度、民事、刑法</p>
+        <div class="chapters">第一～七課</div>
+      </div>
+      <div class="home-card red" onclick="showPage('new-laws')">
+        <h3>🔴 2024–2026 新修法</h3>
+        <p>憲法法庭、死刑裁判、最低工資法、青鳥運動、剴剴案</p>
+        <div class="chapters">最新時事必考</div>
+      </div>
+      <div class="home-card" onclick="showPage('compare-poli')">
+        <h3>📐 憲法架構 + 比較圖表</h3>
+        <p>憲法三大支柱、基本權利逐條、五院職權、政府體制比較</p>
+        <div class="chapters">快速複習</div>
+      </div>
+      <div class="home-card" onclick="showPage('human-rights')">
+        <h3>🕊️ 人權：消極/積極/三代</h3>
+        <p>第一到第三代人權、ICCPR/ICESCR/CEDAW/CRC全覽</p>
+        <div class="chapters">必考重點</div>
+      </div>
+      <div class="home-card green" onclick="showPage('taiwan-relations')">
+        <h3>🌐 台灣國際關係</h3>
+        <p>台美關係・戰略模糊・兩岸九二共識・邦交國・國際組織</p>
+        <div class="chapters">選修G重點</div>
+      </div>
+      <div class="home-card gold" onclick="showPage('election-systems')">
+        <h3>🗳️ 選舉制度全比較</h3>
+        <p>FPTP/比例代表/混合制・台灣各選舉・罷免制度完整</p>
+        <div class="chapters">考試常出現</div>
+      </div>
+      <div class="home-card" onclick="showPage('econ-deep')">
+        <h3>💱 供需・匯率・貿易深度</h3>
+        <p>曲線移動判斷・比較利益計算・升值貶值分析・WTO</p>
+        <div class="chapters">選修F重點</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ EXAM INFO ============================================================ -->
+<div class="page" id="page-exam-info">
+  <div class="book-title">
+    <h2>📋 分科測驗公民考科說明</h2>
+    <p>大考中心正式公告 ‧ 111學年度起適用</p>
+  </div>
+  <div class="lesson-block">
+    <div class="lesson-header open" onclick="toggleLesson(this)">
+      <div class="lesson-num">壹</div><h3>測驗目標三層次</h3><span class="caret">▼</span>
+    </div>
+    <div class="lesson-body open">
+      <div class="mindmap">
+        <div class="mindmap-center">公民考科測驗目標</div>
+        <div class="mindmap-row">
+          <div class="mindmap-node">
+            一、掌握知識說明現象<br>
+            <span class="mindmap-leaf">1-1 說明社會現象及成因</span>
+            <span class="mindmap-leaf">1-2 釐清核心概念</span>
+          </div>
+          <div class="mindmap-node green">
+            二、整合知識分析議題<br>
+            <span class="mindmap-leaf">2-1 分析社會相關資料</span>
+            <span class="mindmap-leaf">2-2 界定當代問題</span>
+            <span class="mindmap-leaf">2-3 解釋社會現象</span>
+            <span class="mindmap-leaf">2-4 辨別多種解釋觀點</span>
+          </div>
+          <div class="mindmap-node red">
+            三、反思評論與實踐<br>
+            <span class="mindmap-leaf">3-1 反思評論公民知識</span>
+            <span class="mindmap-leaf">3-2 整合論述提出論證</span>
+            <span class="mindmap-leaf">3-3 規劃公共行動方案</span>
+          </div>
+        </div>
+      </div>
+
+      <h4>題型與配分</h4>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>題型</th><th>包含</th><th>配分比例</th></tr>
+          <tr><td class="blue-cell">選擇題</td><td>單選題 + 多選題</td><td class="red-cell">70%–80%</td></tr>
+          <tr><td class="blue-cell">非選擇題</td><td>題組題、申論題、探究題</td><td class="red-cell">20%–30%</td></tr>
+        </table>
+      </div>
+      <div class="exam-alert">選擇題與非選擇題可以單獨或混合形式出現；試卷組成以八大主題建議節數比例為原則</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ BK1 LAW ============================================================ -->
+<div class="page" id="page-bk1-law">
+  <div class="book-title" style="background:var(--red);">
+    <h2>⚖️ 法律與社會 <span class="book-badge">主題 H</span><span class="book-badge">必修加深</span></h2>
+    <p>社會規範 → 人權 → 憲法 → 行政法 → 刑法 → 政府財政</p>
+  </div>
+
+  <!-- LESSON 1 -->
+  <div class="lesson-block">
+    <div class="lesson-header open" onclick="toggleLesson(this)">
+      <div class="lesson-num">1</div><h3>社會規範與國際人權</h3><span class="caret">▼</span>
+    </div>
+    <div class="lesson-body open">
+      <h4>一、社會規範的落實及影響</h4>
+      <div class="mindmap">
+        <div class="mindmap-center">社會規範</div>
+        <div class="mindmap-row">
+          <div class="mindmap-node">道德規範<br><span class="mindmap-leaf">無強制力</span><span class="mindmap-leaf">良心約束</span></div>
+          <div class="mindmap-node">風俗習慣<br><span class="mindmap-leaf">集體文化</span><span class="mindmap-leaf">地域差異</span></div>
+          <div class="mindmap-node red">法律規範<br><span class="mindmap-leaf">國家強制力</span><span class="mindmap-leaf">明文規定</span><span class="mindmap-leaf">罰則</span></div>
+          <div class="mindmap-node green">宗教規範<br><span class="mindmap-leaf">信仰約束</span></div>
+        </div>
+      </div>
+      <div class="box box-blue">
+        <div class="box-title">📌 法律與道德的關係</div>
+        法律是道德的<span class="blue">最低標準</span>；道德不一定入法，但違法行為通常也違反道德。<br>
+        法律隨社會變遷而修正（如：同婚合法化）。
+      </div>
+
+      <h4>二、社會規範在何情況下可能改變？</h4>
+      <ul class="content-list">
+        <li><span class="red">社會運動</span>：推動觀念革新，倡議修法（如：#MeToo、婚姻平權）</li>
+        <li><span class="red">技術變革</span>：新科技帶來新規範需求（如：AI生成、加密貨幣）</li>
+        <li><span class="red">國際接軌</span>：條約、公約推動國內立法（如：CEDAW、CRPD）</li>
+        <li>司法解釋：大法官解釋改變法律適用</li>
+      </ul>
+
+      <h4>三、國際社會對人權的保障</h4>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>文件</th><th>年份</th><th>內容重點</th><th>效力</th></tr>
+          <tr><td class="blue-cell">《世界人權宣言》</td><td>1948</td><td>人人生而自由平等；30條基本原則</td><td>宣示性，無強制力</td></tr>
+          <tr><td class="blue-cell">《公民與政治權利國際公約》ICCPR</td><td>1966</td><td>生命、自由、言論、集會、選舉</td><td>有強制力（締約國）</td></tr>
+          <tr><td class="blue-cell">《經濟社會文化權利國際公約》ICESCR</td><td>1966</td><td>工作、教育、健康、社會安全</td><td>有強制力（締約國）</td></tr>
+          <tr><td class="blue-cell">《消除對婦女一切形式歧視公約》CEDAW</td><td>1979</td><td>性別平等、反歧視</td><td>台灣已施行</td></tr>
+          <tr><td class="blue-cell">《兒童權利公約》CRC</td><td>1989</td><td>生存、發展、受保護、參與</td><td>台灣2014年施行法</td></tr>
+        </table>
+      </div>
+
+      <h4>四、國際人權公約在我國的實踐</h4>
+      <div class="flow">
+        <div class="flow-step">立法院批准公約</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step green">制定施行法</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">具有國內法效力</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step red">定期審查報告</div>
+      </div>
+      <div class="box box-red">
+        <div class="box-title">🔴 考試重點</div>
+        台灣非聯合國會員，但透過「施行法」使公約具有國內法效力。<br>
+        兩公約（ICCPR + ICESCR）→ 2009年施行法通過，<span class="red">效力等同法律</span>，與憲法牴觸時依憲法。
+      </div>
+    </div>
+  </div>
+
+  <!-- LESSON 2 -->
+  <div class="lesson-block">
+    <div class="lesson-header" onclick="toggleLesson(this)">
+      <div class="lesson-num">2</div><h3>民主正當性與權利主體</h3><span class="caret">▼</span>
+    </div>
+    <div class="lesson-body">
+      <h4>一、民主正當性的重要性</h4>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>正當性來源</th><th>說明</th><th>例子</th></tr>
+          <tr><td class="blue-cell">輸入正當性</td><td>人民授權、代表選出</td><td>選舉、公民投票</td></tr>
+          <tr><td class="blue-cell">輸出正當性</td><td>政策有效解決問題</td><td>良好施政績效</td></tr>
+          <tr><td class="blue-cell">程序正當性</td><td>過程公開公正</td><td>立法程序、聽證</td></tr>
+        </table>
+      </div>
+
+      <h4>二、法律的制定與解釋</h4>
+      <div class="box box-blue">
+        <div class="box-title">立法程序</div>
+        提案（行政院/立法委員/考試院/司法院/監察院）→ 委員會審查 → 院會三讀 → 總統公布 → 生效
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>解釋方式</th><th>說明</th></tr>
+          <tr><td class="blue-cell">文義解釋</td><td>依文字字面意義解釋</td></tr>
+          <tr><td class="blue-cell">體系解釋</td><td>配合整部法律系統解釋</td></tr>
+          <tr><td class="blue-cell">目的解釋</td><td>依立法目的解釋</td></tr>
+          <tr><td class="blue-cell">比較解釋</td><td>參考外國立法例</td></tr>
+          <tr><td class="red-cell">憲法解釋</td><td>憲法法庭（大法官）終局解釋</td></tr>
+        </table>
+      </div>
+
+      <h4>三、誰可以享有權利並承擔義務？</h4>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>主體</th><th>權利能力起始</th><th>行為能力</th></tr>
+          <tr><td class="blue-cell">自然人</td><td>出生（胎兒特例）</td><td>依年齡（成年18歲）</td></tr>
+          <tr><td class="blue-cell">法人</td><td>登記成立</td><td>完全行為能力</td></tr>
+          <tr><td>未成年人（&lt;18）</td><td>出生</td><td>限制行為能力</td></tr>
+          <tr><td>受監護宣告</td><td>出生</td><td class="red-cell">無行為能力</td></tr>
+        </table>
+      </div>
+      <div class="exam-alert">2023年1月1日起民法成年年齡從20歲降為<span class="red">18歲</span>。18歲即可獨立締結契約、申辦信用卡。</div>
+    </div>
+  </div>
+
+  <!-- LESSON 3 -->
+  <div class="lesson-block">
+    <div class="lesson-header" onclick="toggleLesson(this)">
+      <div class="lesson-num">3</div><h3>基本權利與憲政主義</h3><span class="caret">▼</span>
+    </div>
+    <div class="lesson-body">
+      <h4>憲法保障人民基本權利</h4>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>種類</th><th>條文</th><th>內容</th><th>限制方式</th></tr>
+          <tr><td class="red-cell">平等權</td><td>§7</td><td>不因種族、性別等受差別待遇</td><td>合理差別對待允許</td></tr>
+          <tr><td class="blue-cell">自由權</td><td>§8–§14</td><td>人身、居住、遷徙、言論、講學、著作、出版、秘密通訊、宗教、集會、結社</td><td>法律保留原則</td></tr>
+          <tr><td class="blue-cell">受益權</td><td>§15–§18</td><td>生存、工作、財產、請願、訴願、訴訟、服公職</td><td>法律保留</td></tr>
+          <tr><td class="blue-cell">參政權</td><td>§17–§18</td><td>選舉、罷免、創制、複決</td><td>年齡限制</td></tr>
+          <tr><td class="red-cell">社會權</td><td>§152–§157</td><td>社會救助、勞工保護、婦女保護</td><td>具體立法實現</td></tr>
+        </table>
+      </div>
+
+      <h4>基本權利限制條件（比例原則）</h4>
+      <div class="flow">
+        <div class="flow-step">目的正當</div>
+        <div class="flow-arrow">+</div>
+        <div class="flow-step green">手段適當</div>
+        <div class="flow-arrow">+</div>
+        <div class="flow-step gold">必要性</div>
+        <div class="flow-arrow">+</div>
+        <div class="flow-step red">衡量均衡性</div>
+      </div>
+      <div class="box box-blue">
+        <div class="box-title">比例原則四個子原則</div>
+        ①適合性：手段能達目的 ②必要性：選擇侵害最小手段 ③狹義比例性：利益均衡 ④目的正當性（有些版本含此）
+      </div>
+
+      <h4>結社自由如何受到限制？</h4>
+      <ul class="content-list">
+        <li>政黨不得主張分裂國土（釋字 644 號）</li>
+        <li>憲法法庭可解散違憲政黨（憲訴法）</li>
+        <li>職業團體設立需依法登記</li>
+      </ul>
+
+      <h4>憲政主義下的有限政府</h4>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>原則</th><th>說明</th></tr>
+          <tr><td class="red-cell">法律保留原則</td><td>限制人民自由，必須有法律依據</td></tr>
+          <tr><td class="blue-cell">法律優位原則</td><td>行政行為不得違反法律</td></tr>
+          <tr><td class="blue-cell">分權制衡</td><td>五院互相制衡，避免權力集中</td></tr>
+          <tr><td class="blue-cell">司法審查</td><td>違憲審查保護人民免受國家侵害</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- LESSON 4 -->
+  <div class="lesson-block">
+    <div class="lesson-header" onclick="toggleLesson(this)">
+      <div class="lesson-num">4</div><h3>依法行政與權利救濟</h3><span class="caret">▼</span>
+    </div>
+    <div class="lesson-body">
+      <h4>人權保障為何需要行政法？</h4>
+      <div class="box box-blue">
+        <div class="box-title">行政法功能</div>
+        規範政府行政行為，保護人民免受行政機關違法或不當侵害，同時確保行政效率。
+      </div>
+
+      <h4>正當程序與實質正義</h4>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>類型</th><th>內容</th><th>例子</th></tr>
+          <tr><td class="red-cell">程序正義</td><td>過程公開、當事人有陳述機會</td><td>行政聽證、告知理由</td></tr>
+          <tr><td class="blue-cell">實質正義</td><td>決定內容公平合理</td><td>裁量不得恣意、符合比例</td></tr>
+        </table>
+      </div>
+
+      <h4>行政救濟三道程序</h4>
+      <div class="flow">
+        <div class="flow-step">人民遭受行政違害</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step gold">訴願（上級機關）</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step green">行政訴訟（行政法院）</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step red">國家賠償</div>
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>救濟方式</th><th>機關</th><th>期限</th><th>要點</th></tr>
+          <tr><td class="red-cell">訴願</td><td>上級行政機關</td><td>知悉後30日</td><td>先行程序（行政訴訟的前置）</td></tr>
+          <tr><td class="blue-cell">行政訴訟</td><td>行政法院</td><td>訴願決定後2個月</td><td>撤銷、確認、課予義務</td></tr>
+          <tr><td class="blue-cell">國家賠償</td><td>普通法院</td><td>2年（知悉時起）</td><td>公務員故意或過失、公共設施</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- LESSON 5 -->
+  <div class="lesson-block">
+    <div class="lesson-header" onclick="toggleLesson(this)">
+      <div class="lesson-num">5</div><h3>犯罪與刑罰 ── 完整罪責體系深解</h3><span class="caret">▼</span>
+    </div>
+    <div class="lesson-body">
+
+      <h4>🔑 刑法基本原則（四大核心）</h4>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>原則</th><th>法條</th><th>說明</th><th>生活例子</th></tr>
+          <tr><td class="red-cell">罪刑法定原則</td><td>§1</td><td>「法無明文，不為罪；法無明文，不處罰」—行為時法律未規定為犯罪，不得處罰</td><td>AI詐騙剛出現時，尚未入法→不能以舊法處罰</td></tr>
+          <tr><td class="blue-cell">無罪推定原則</td><td>§154</td><td>未經判決確定前推定無罪；舉證責任在檢察官</td><td>被逮捕≠有罪，判決確定才算</td></tr>
+          <tr><td class="blue-cell">從舊從輕原則</td><td>§2</td><td>行為後法律有變更，適用行為時法律；但新法較輕者適用新法</td><td>2023年修法降低某罪刑度→對正在審理的被告適用新法</td></tr>
+          <tr><td class="blue-cell">比例原則</td><td>§57</td><td>刑罰輕重須與罪行嚴重性相符，不得過苛</td><td>偷一顆糖不能判無期徒刑</td></tr>
+        </table>
+      </div>
+
+      <hr class="section-hr">
+      <h4>🔴 犯罪成立三層次：構成要件→違法性→有責性</h4>
+      <div class="box box-red">
+        <div class="box-title">核心概念：「壞事」≠「犯罪」</div>
+        做了壞事（＝不法）只是第一步。還必須通過三道關卡才算犯罪。<br>
+        <span class="red">📌 記憶口訣：「構違責」→ 構成要件符合 → 違法性具備 → 有責性存在</span>
+      </div>
+
+      <div class="mindmap">
+        <div class="mindmap-center">犯罪成立三層次</div>
+        <div class="mindmap-row">
+          <div class="mindmap-node red">① 構成要件該當性<br><span class="mindmap-leaf">行為符合法條描述</span><span class="mindmap-leaf">例：故意殺人→§271</span></div>
+          <div class="mindmap-node">② 違法性<br><span class="mindmap-leaf">有無正當化事由？</span><span class="mindmap-leaf">正當防衛→不違法</span></div>
+          <div class="mindmap-node green">③ 有責性（罪責）<br><span class="mindmap-leaf">行為人可非難？</span><span class="mindmap-leaf">精神障礙→無責任</span></div>
+        </div>
+      </div>
+
+      <hr class="section-hr">
+      <h4>📘 第一關：構成要件該當性</h4>
+      <div class="box box-blue">
+        <div class="box-title">什麼是構成要件？</div>
+        刑法條文描述的犯罪行為模式。行為人的行為必須「符合」條文描述，才進入下一關。<br>
+        例如：刑法§271「殺人者，處死刑、無期徒刑或10年以上有期徒刑」—「殺人」即為構成要件。
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>要素</th><th>說明</th><th>例子</th></tr>
+          <tr><td class="red-cell">客觀要件</td><td>外在行為、結果、因果關係</td><td>開槍（行為）→ 死亡（結果）→ 有因果關係</td></tr>
+          <tr><td class="blue-cell">主觀要件</td><td>故意或過失</td><td>故意殺人 vs 過失致死（兩條不同法條）</td></tr>
+        </table>
+      </div>
+
+      <hr class="section-hr">
+      <h4>📘 第二關：違法性（阻卻違法事由）</h4>
+      <div class="box box-blue">
+        符合構成要件，但若有「正當理由」，行為就不違法。這叫做「阻卻違法事由」。
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>阻卻違法事由</th><th>法條</th><th>說明</th><th>實例</th><th>限制</th></tr>
+          <tr><td class="red-cell">正當防衛</td><td>§23</td><td>對現在不法侵害，出於防衛自己或他人之正當防衛行為，不罰</td><td>歹徒持刀搶劫，你拿椅子反擊打傷他→不罰</td><td>防衛手段不得過當（過當→§23但書，得減輕或免除）</td></tr>
+          <tr><td class="blue-cell">緊急避難</td><td>§24</td><td>為避免自己或他人生命等危難，不得已之行為，不罰</td><td>煞車失靈，撞停路邊車輛以避免傷人→不罰</td><td>避難行為不得逾越必要程度；且須非行為人所造成的危難</td></tr>
+          <tr><td class="blue-cell">依法令行為</td><td>§21</td><td>依法令之行為，不罰</td><td>警察依法拘提犯罪嫌疑人，限制其自由→不違法</td><td>需有明確法令依據</td></tr>
+          <tr><td class="blue-cell">被害人同意</td><td>超法定</td><td>被害人有效同意傷害，阻卻違法（限制</td><td>拳擊比賽中擊倒對手→不罰（雙方同意參賽）</td><td>同意不得違反善良風俗；生命權不可同意放棄</td></tr>
+        </table>
+      </div>
+      <div class="box box-red">
+        <div class="box-title">🔴 正當防衛 vs 緊急避難：關鍵區別</div>
+        正當防衛：針對<span class="red">「不法」侵害者</span>本身（你打的是壞人）<br>
+        緊急避難：針對<span class="red">「無辜第三者」</span>的財物（你撞的是路邊無辜車輛）<br>
+        ※ 緊急避難因傷及無辜，條件更嚴格！
+      </div>
+
+      <hr class="section-hr">
+      <h4>📘 第三關：有責性（罪責）── 阻卻、減免罪責事由</h4>
+      <div class="box box-gold">
+        <div class="box-title">核心觀念：「期待可能性」</div>
+        法律的核心問題：<span class="red">社會能不能「期待」這個人做出合法行為？</span><br>
+        如果在當時的情境下，連一般理性之人都無法期待他做出合法行為，就不能苛責他。<br>
+        <span class="blue">→ 無期待可能性 = 無罪責 = 超法定阻卻罪責事由（寬恕罪責事由）</span>
+      </div>
+
+      <div class="box box-grey" style="background:#fff8e1;border-left:4px solid #f9a825;">
+        <div class="box-title" style="color:#e65100;">📖 課本案例1-4（圖片所示）：燙衣服媽媽</div>
+        媽媽在燙衣服時，幼兒從床上跌落血流不止。她太慌亂，急忙帶幼兒去醫院而忘了拔插頭，釀成火災。<br>
+        <span class="red">→ 主張「無期待可能性」的超法定抗辯：</span><br>
+        在子女受傷的緊急情況下，作父母者心理極度慌亂，社會難以「期待」她能冷靜完成「拔插頭」這個動作。<br>
+        她「做了壞事」（釀火災），但卻「不是壞人」（無可責難性）→ 可能阻卻有責性。
+      </div>
+
+      <h4>阻卻罪責事由體系（依課本圖解展開）</h4>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th colspan="2">類型</th><th>法條</th><th>說明</th><th>效果</th><th>生活例子</th></tr>
+          <!-- 法定 - 欠缺不法意識 -->
+          <tr>
+            <td rowspan="2" class="red-cell">法定阻卻罪責</td>
+            <td class="blue-cell">欠缺不法意識<br>（不知道違法）</td>
+            <td>§16</td>
+            <td>不知自己的行為違法（不知道法律規定）</td>
+            <td><span class="red">不可避免的錯誤→排除罪責</span><br><span class="blue">可以避免→得減輕</span></td>
+            <td>外國人初來台，不知道台灣禁止某行為，且無從得知→可主張排除。<br>⚠️「不知道法律」原則上不能免責，除非真的無從得知（極罕見）</td>
+          </tr>
+          <!-- 法定 - 欠缺責任能力 -->
+          <tr>
+            <td class="blue-cell">欠缺責任能力<br>（無法為自己的行為負責）</td>
+            <td>§18、§19、§20</td>
+            <td>因年齡或精神狀況，無法理解行為的法律意義</td>
+            <td>視情況排除或減輕</td>
+            <td>詳見下表</td>
+          </tr>
+          <!-- 超法定 - 寬恕罪責 -->
+          <tr>
+            <td class="red-cell">超法定阻卻罪責</td>
+            <td class="blue-cell">寬恕罪責事由<br>（期待可能性理論）</td>
+            <td>無明文/§24準用</td>
+            <td>情況特殊，無法期待行為人做出合法行為</td>
+            <td>得減輕刑責（非全部免責）</td>
+            <td>燙衣服媽媽案；或：司機被歹徒挾持，被迫參與犯罪</td>
+          </tr>
+        </table>
+      </div>
+
+      <h4>責任能力詳細規定（§18、§19、§20）</h4>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>類別</th><th>條件</th><th>法條</th><th>效果</th><th>說明</th></tr>
+          <!-- 年齡 -->
+          <tr>
+            <td rowspan="3" class="red-cell">年齡<br>（§18）</td>
+            <td>未滿14歲</td>
+            <td>§18 I</td>
+            <td class="red-cell">排除刑事責任（不罰）</td>
+            <td>改依少年事件處理法、兒少法，以保護取代懲罰。例：12歲小孩打人，不能以傷害罪起訴，但可接受輔導。</td>
+          </tr>
+          <tr>
+            <td>14歲以上未滿18歲</td>
+            <td>§18 II</td>
+            <td class="blue-cell">得減輕其刑</td>
+            <td>有刑事責任，但法院可考量年齡酌予減輕。少年法院仍優先以保護處分處理（感化教育、假日生活輔導）。</td>
+          </tr>
+          <tr>
+            <td>80歲以上</td>
+            <td>§18 III</td>
+            <td class="blue-cell">得減輕其刑</td>
+            <td>考量老年人行為控制能力下降。不是「一定」減輕，是法院「可以」減輕。</td>
+          </tr>
+          <!-- 精神 -->
+          <tr>
+            <td rowspan="2" class="red-cell">精神狀況<br>（§19）</td>
+            <td>行為時因精神障礙，完全無辨識能力或控制能力</td>
+            <td>§19 I</td>
+            <td class="red-cell">不罰（排除刑責）</td>
+            <td>例：嚴重思覺失調症患者在病發時殺人，完全不知自己在做什麼→不罰，但可施予保安處分（強制治療）。<br>⚠️ 2024年憲判第9號：不得對無責任能力者判死刑。</td>
+          </tr>
+          <tr>
+            <td>精神障礙，辨識/控制能力顯著降低</td>
+            <td>§19 II</td>
+            <td class="blue-cell">得減輕其刑</td>
+            <td>不是全無責任，但能力明顯受損→法院可減輕。例：輕度憂鬱症患者在病發期所為之犯罪。</td>
+          </tr>
+          <!-- 生理 -->
+          <tr>
+            <td class="red-cell">生理因素<br>（§20）</td>
+            <td>瘖啞人（聾啞者）</td>
+            <td>§20</td>
+            <td class="blue-cell">得減輕其刑</td>
+            <td>立法考量：聾啞者接受教育的機會可能較少，對法律的理解能力可能受影響。現代實務中已較少適用。</td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="box box-red">
+        <div class="box-title">🔴 超重要！§19精神障礙「自招」例外</div>
+        若行為人<span class="red">故意或因過失自行造成精神障礙狀態</span>，不得主張§19免責！<br>
+        例子：甲故意喝醉酒後去殺人，不能說「我喝醉沒有責任能力」→ 仍須負完整刑責。<br>
+        法條依據：§19 III「行為前已自陷於此狀態者，不適用前二項之規定。」
+      </div>
+
+      <h4>寬恕罪責事由（超法定）── 正當防衛過當 & 緊急避難過當</h4>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>情形</th><th>法條</th><th>說明</th><th>效果</th><th>例子</th></tr>
+          <tr>
+            <td class="blue-cell">正當防衛過當</td>
+            <td>§23 但書</td>
+            <td>防衛行為逾越必要程度（過當）→阻卻違法失敗，但考量當時情緒緊張</td>
+            <td class="blue-cell">得減輕或免除其刑</td>
+            <td>歹徒徒手攻擊，你拿槍射殺→防衛過當，但情境緊急可減輕</td>
+          </tr>
+          <tr>
+            <td class="blue-cell">緊急避難過當</td>
+            <td>§24 I 但書</td>
+            <td>避難行為超過必要程度，但在情境特殊下情有可原</td>
+            <td class="blue-cell">得減輕或免除其刑</td>
+            <td>為救兒子性命，砸壞別人整台車（只要開門就好）→過當，但情急可減輕</td>
+          </tr>
+        </table>
+      </div>
+
+      <hr class="section-hr">
+      <h4>🔵 故意 vs 過失（主觀要件核心）</h4>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>類型</th><th>法條</th><th>定義</th><th>例子</th></tr>
+          <tr><td class="red-cell">直接故意</td><td>§13 I</td><td>行為人明知且有意使結果發生</td><td>甲知道開槍會死人，仍故意開槍→殺人罪§271</td></tr>
+          <tr><td class="red-cell">間接故意<br>（未必故意）</td><td>§13 II</td><td>行為人預見可能發生，且容認其發生</td><td>甲向人群開槍，預見可能打死人但不在意→仍成立故意</td></tr>
+          <tr><td class="blue-cell">有認識過失</td><td>§14 I</td><td>預見可能發生，但確信不會發生</td><td>甲覺得自己技術很好，超速後失控撞死人→過失致死§276</td></tr>
+          <tr><td class="blue-cell">無認識過失</td><td>§14 II</td><td>應注意且能注意，而未注意</td><td>甲疏忽未注意後照鏡，倒車壓死人→應注意而未注意</td></tr>
+        </table>
+      </div>
+      <div class="exam-alert">刑法以故意犯為原則，過失犯以<span class="red">有特別規定者為限</span>（§12）。換言之，法條沒有明文規定過失犯，就算是過失，也不罰。</div>
+
+      <hr class="section-hr">
+      <h4>🔵 刑事訴訟程序與刑罰種類</h4>
+      <div class="flow">
+        <div class="flow-step">犯罪發生</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">偵查（檢察官）</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step gold">起訴/不起訴</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step green">審判（法院三審）</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step red">判決確定→執行</div>
+      </div>
+
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>刑罰種類</th><th>說明</th><th>備注</th></tr>
+          <tr><td class="red-cell">死刑</td><td>剝奪生命</td><td>2024年憲判第9號：有條件合憲，限縮適用（詳見新法頁）</td></tr>
+          <tr><td class="blue-cell">無期徒刑</td><td>終身監禁</td><td>服滿25年可假釋</td></tr>
+          <tr><td class="blue-cell">有期徒刑</td><td>2個月至15年（數罪併罰最高30年）</td><td>最常見</td></tr>
+          <tr><td class="blue-cell">拘役</td><td>1日至60日</td><td>輕罪、可易科罰金</td></tr>
+          <tr><td class="blue-cell">罰金</td><td>繳交金錢</td><td>易服社會勞動</td></tr>
+          <tr><td class="green" style="color:var(--green);font-weight:700;">沒收</td><td>犯罪所得或工具</td><td>2016年修正，獨立為刑罰附隨效果</td></tr>
+        </table>
+      </div>
+
+      <h4>緩刑制度（§74）</h4>
+      <div class="box box-green">
+        <div class="box-title">什麼是緩刑？</div>
+        宣告<span class="red">2年以下有期徒刑、拘役、罰金</span>，符合條件者，法院得宣告2～5年緩刑期。<br>
+        期間內不再犯罪→刑罰不執行（等同給一次改過機會）。<br>
+        條件：①未曾受有期徒刑以上宣告；或②執行完畢/赦免後5年內未再受有期徒刑宣告。<br>
+        <span class="red">附條件緩刑</span>：法院可要求道歉、賠償被害人、義務勞務40～240小時、戒癮治療等。
+      </div>
+
+      <h4>刑事責任年齡詳表</h4>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>年齡</th><th>刑事責任</th><th>處理方式</th><th>法律依據</th></tr>
+          <tr><td class="red-cell">未滿12歲</td><td>無任何刑事責任</td><td>家長管教、社福機構介入、直轄市縣市主管機關輔導</td><td>少事法§85之1</td></tr>
+          <tr><td class="gold" style="color:var(--gold);font-weight:700;">12歲以上未滿18歲</td><td>少年刑事責任（減輕）</td><td>優先保護處分（感化教育、假日輔導）；情節重大可移送少年法院刑事庭</td><td>§18 II；少事法</td></tr>
+          <tr><td class="blue-cell">18歲以上</td><td>完全刑事責任</td><td>一般刑事訴訟程序</td><td>§18</td></tr>
+          <tr><td class="blue-cell">80歲以上</td><td>完全責任（得減輕）</td><td>法院可酌予減輕</td><td>§18 III</td></tr>
+        </table>
+      </div>
+      <div class="exam-alert">少年保護處分種類（§42少事法）：①訓誡；②假日生活輔導；③保護管束；④安置輔導；⑤感化教育。優先不以刑罰懲罰，以教育為核心。</div>
+
+      <h4>如何在刑事法庭上證明主張</h4>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>原則</th><th>說明</th></tr>
+          <tr><td class="red-cell">舉證責任</td><td>檢察官負舉證責任；被告有沉默權，不須自證其罪</td></tr>
+          <tr><td class="blue-cell">超越合理懷疑</td><td>法官對被告有罪的確信必須達到「超越合理懷疑」的程度</td></tr>
+          <tr><td class="blue-cell">直接審理</td><td>法官親自聽取證人、被告陳述，不得僅憑書面</td></tr>
+          <tr><td class="blue-cell">傳聞法則</td><td>未當庭作證的證詞原則上不得採為證據（有例外）</td></tr>
+        </table>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- LESSON 6 -->
+  <div class="lesson-block">
+    <div class="lesson-header" onclick="toggleLesson(this)">
+      <div class="lesson-num">6</div><h3>政府資源分配與外部成本</h3><span class="caret">▼</span>
+    </div>
+    <div class="lesson-body">
+      <h4>政府的支出與收入</h4>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>政府收入</th><th>說明</th></tr>
+          <tr><td class="blue-cell">稅收</td><td>所得稅、消費稅、財產稅（主要收入）</td></tr>
+          <tr><td>規費</td><td>使用特定公共服務收費</td></tr>
+          <tr><td>國有財產收益</td><td>國企盈利、租金</td></tr>
+          <tr><td class="red-cell">公債</td><td>借款，未來稅收償還（赤字財政）</td></tr>
+        </table>
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>政府支出分類</th><th>例子</th></tr>
+          <tr><td class="blue-cell">經常支出</td><td>人事費、行政費、社會補助</td></tr>
+          <tr><td class="blue-cell">資本支出</td><td>建設、公共工程</td></tr>
+          <tr><td class="red-cell">移轉性支付</td><td>社會保險、補貼（非換取勞務）</td></tr>
+        </table>
+      </div>
+
+      <h4>政府分配資源的考量</h4>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>市場失靈類型</th><th>原因</th><th>政府介入方式</th></tr>
+          <tr><td class="red-cell">外部性</td><td>私人成本≠社會成本</td><td>課稅（負外部性）/補貼（正外部性）</td></tr>
+          <tr><td class="blue-cell">公共財</td><td>非排他性 + 非競爭性</td><td>政府直接提供（國防、路燈）</td></tr>
+          <tr><td class="blue-cell">資訊不對稱</td><td>買賣雙方資訊不均</td><td>強制資訊揭露、監管</td></tr>
+          <tr><td class="blue-cell">獨占</td><td>市場集中，無競爭</td><td>公平交易法規管</td></tr>
+        </table>
+      </div>
+
+      <h4>政府對環境永續的考量</h4>
+      <div class="box box-green">
+        <div class="box-title">碳定價與環境政策工具</div>
+        ①碳稅（台灣2024–2025討論中）②排放權交易制度（ETS）③碳費（台灣2024年碳費費率訂定）
+      </div>
+      <div class="exam-alert">台灣2024年氣候變遷因應法施行，碳費制度正式啟動，大型企業（排放量≥25,000公噸CO₂e）率先適用</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ BK2 POLITICS ============================================================ -->
+<div class="page" id="page-bk2-poli">
+  <div class="book-title" style="background: var(--green);">
+    <h2>🏛️ 民主政治與社會 <span class="book-badge">主題 C D</span><span class="book-badge">必修</span></h2>
+    <p>公民身份 → 民主治理 → 政府組成 → 政治參與 → 媒體 → 勞動 → 全球化</p>
+  </div>
+
+  <div class="lesson-block">
+    <div class="lesson-header open" onclick="toggleLesson(this)">
+      <div class="lesson-num">1</div><h3>公民身分與國家主權</h3><span class="caret">▼</span>
+    </div>
+    <div class="lesson-body open">
+      <h4>公民身份的演變</h4>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>理論</th><th>學者</th><th>公民身份內涵</th></tr>
+          <tr><td class="blue-cell">自由主義</td><td>洛克</td><td>消極公民：享有個人自由與財產保護</td></tr>
+          <tr><td class="blue-cell">共和主義</td><td>盧梭</td><td>積極公民：參與公共事務、公民德行</td></tr>
+          <tr><td class="blue-cell">T.H.Marshall</td><td>馬歇爾</td><td>三代公民權：公民→政治→社會</td></tr>
+        </table>
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>馬歇爾三代公民權</th><th>內容</th><th>發展時間</th></tr>
+          <tr><td class="red-cell">公民(civil)權利</td><td>言論、信仰、法律</td><td>18世紀</td></tr>
+          <tr><td class="blue-cell">政治(political)權利</td><td>選舉、被選舉</td><td>19世紀</td></tr>
+          <tr><td class="green" style="color:var(--green);font-weight:700;">社會(social)權利</td><td>教育、醫療、社會安全</td><td>20世紀</td></tr>
+        </table>
+      </div>
+
+      <h4>我國公民權利的落實</h4>
+      <ul class="content-list">
+        <li>選舉權：年滿<span class="red">20歲</span>（投票年齡，注意：行為能力成年為18歲，兩者不同）</li>
+        <li>被選舉權：立委23歲、總統40歲、縣市長26歲</li>
+        <li>公民投票：提案18歲，投票18歲（2023年修正）</li>
+      </ul>
+
+      <h4>國家認同與多元身份認同</h4>
+      <div class="box box-blue">
+        <div class="box-title">台灣的多元身份認同挑戰</div>
+        原住民族認同、客家認同、新住民認同、性別認同、跨國移民認同；政策應尊重多元文化主義。
+      </div>
+    </div>
+  </div>
+
+  <div class="lesson-block">
+    <div class="lesson-header" onclick="toggleLesson(this)">
+      <div class="lesson-num">2</div><h3>民主治理與公平正義</h3><span class="caret">▼</span>
+    </div>
+    <div class="lesson-body">
+      <h4>「民主」與「治理」的關係</h4>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>民主</th><th>治理</th><th>民主治理</th></tr>
+          <tr><td>人民授權、選舉</td><td>政府施政能力</td><td>兩者結合：有效又負責任</td></tr>
+          <tr><td>政治正當性</td><td>行政效率</td><td>施政透明、課責</td></tr>
+        </table>
+      </div>
+
+      <h4>民主治理與公平正義</h4>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>正義理論</th><th>學者</th><th>核心主張</th></tr>
+          <tr><td class="red-cell">自由主義正義</td><td>羅爾斯</td><td>無知之幕：①每人最大平等自由；②不平等對最弱勢有利（差異原則）</td></tr>
+          <tr><td class="blue-cell">效益主義</td><td>彌爾</td><td>最大多數人最大幸福</td></tr>
+          <tr><td class="blue-cell">社群主義</td><td>桑德爾</td><td>共同善、社群脈絡中的正義</td></tr>
+          <tr><td class="green" style="color:var(--green);font-weight:700;">能力取向</td><td>沈恩/努斯鮑姆</td><td>每人應有基本能力發展空間</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="lesson-block">
+    <div class="lesson-header" onclick="toggleLesson(this)">
+      <div class="lesson-num">3</div><h3>政府的組成</h3><span class="caret">▼</span>
+    </div>
+    <div class="lesson-body">
+      <h4>常見政府體制比較</h4>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th class="compare-hdr">項目</th><th class="compare-hdr">內閣制</th><th class="compare-hdr">總統制</th><th class="compare-hdr">半總統制</th></tr>
+          <tr><td class="blue-cell">代表</td><td>英國、日本</td><td>美國</td><td>法國、台灣</td></tr>
+          <tr><td class="blue-cell">行政首長</td><td>總理（向國會負責）</td><td>總統（民選）</td><td>總統+總理</td></tr>
+          <tr><td class="blue-cell">倒閣機制</td><td>✅ 不信任投票</td><td>❌</td><td>✅ 有限倒閣</td></tr>
+          <tr><td class="blue-cell">解散國會</td><td>✅</td><td>❌</td><td>✅ 總統可解散</td></tr>
+          <tr><td class="red-cell">行政立法關係</td><td>融合（閣員多為議員）</td><td>嚴格分立</td><td>混合</td></tr>
+        </table>
+      </div>
+
+      <h4>我國中央政府與地方政府的關係</h4>
+      <div class="mindmap">
+        <div class="mindmap-center">我國政府體制（五院）</div>
+        <div class="mindmap-row">
+          <div class="mindmap-node red">行政院<br><span class="mindmap-leaf">最高行政機關</span></div>
+          <div class="mindmap-node">立法院<br><span class="mindmap-leaf">立法、監督</span></div>
+          <div class="mindmap-node">司法院<br><span class="mindmap-leaf">違憲審查、審判</span></div>
+          <div class="mindmap-node green">考試院<br><span class="mindmap-leaf">公務員考選</span></div>
+          <div class="mindmap-node">監察院<br><span class="mindmap-leaf">彈劾、糾正</span></div>
+        </div>
+      </div>
+      <div class="exam-alert">2022年修憲複決案（監察院改獨立機關、降低投票門檻）因未達門檻而未通過，監察院架構維持現狀。</div>
+    </div>
+  </div>
+
+  <div class="lesson-block">
+    <div class="lesson-header" onclick="toggleLesson(this)">
+      <div class="lesson-num">4</div><h3>政治參與</h3><span class="caret">▼</span>
+    </div>
+    <div class="lesson-body">
+      <h4>我國公民如何透過選舉參與政治？</h4>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>選制</th><th>適用</th><th>特色</th></tr>
+          <tr><td class="red-cell">相對多數決</td><td>總統選舉（一輪）</td><td>得票最多者當選</td></tr>
+          <tr><td class="blue-cell">單一選區（FPTP）</td><td>立委區域席次</td><td>73席，容易產生多數黨</td></tr>
+          <tr><td class="blue-cell">政黨比例</td><td>立委不分區</td><td>34席，依政黨票分配</td></tr>
+          <tr><td class="green" style="color:var(--green);font-weight:700;">原住民選區</td><td>立委平地/山地</td><td>各3席，共6席</td></tr>
+        </table>
+      </div>
+
+      <h4>除了選舉，我們還能如何參與？</h4>
+      <ul class="content-list">
+        <li><span class="red">公民投票</span>：直接民主；議題提案門檻1%選舉人連署，通過門檻50%有效投票且同意票過半</li>
+        <li><span class="blue">罷免</span>：選舉人1/4連署提案，1/4選舉人投票且過半同意</li>
+        <li>請願、陳情、遊說</li>
+        <li>社會運動、公民社會參與</li>
+        <li>網路輿論、公民新聞</li>
+      </ul>
+      <div class="exam-alert">2021年公投法修正：公投改回每4年隨大選辦理，不再與大選合併（最新規定需確認）。投票年齡從20歲降至18歲。</div>
+    </div>
+  </div>
+
+  <div class="lesson-block">
+    <div class="lesson-header" onclick="toggleLesson(this)">
+      <div class="lesson-num">5</div><h3>公共意見與媒體</h3><span class="caret">▼</span>
+    </div>
+    <div class="lesson-body">
+      <h4>媒體如何影響公共意見？</h4>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>效果理論</th><th>說明</th><th>例子</th></tr>
+          <tr><td class="red-cell">議題設定</td><td>媒體決定「哪些重要」</td><td>頭條新聞影響民眾關注議題</td></tr>
+          <tr><td class="blue-cell">框架效果</td><td>媒體決定「如何描述」</td><td>難民報導→同情 vs. 威脅</td></tr>
+          <tr><td class="blue-cell">初始化效果</td><td>最先提供的資訊影響評判</td><td>政治人物形象先入為主</td></tr>
+          <tr><td class="blue-cell">社會沉默螺旋</td><td>少數意見者保持沉默</td><td>諾諾依‧諾依曼理論</td></tr>
+        </table>
+      </div>
+
+      <h4>科技發展與公共生活</h4>
+      <div class="box box-red">
+        <div class="box-title">🔴 假訊息挑戰（2024–2025重要時事）</div>
+        AI生成虛假內容（Deepfake）、社群媒體回音壁效應、認知作戰。<br>
+        台灣《數位中介服務法》草案2022年提出，2024年持續討論中（尚未通過）。
+      </div>
+    </div>
+  </div>
+
+  <div class="lesson-block">
+    <div class="lesson-header" onclick="toggleLesson(this)">
+      <div class="lesson-num">6</div><h3>勞動參與及社會安全</h3><span class="caret">▼</span>
+    </div>
+    <div class="lesson-body">
+      <h4>勞動權的內涵</h4>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>類型</th><th>內容</th><th>相關法規</th></tr>
+          <tr><td class="red-cell">工作權</td><td>就業機會平等、不受歧視</td><td>就業服務法、性平法</td></tr>
+          <tr><td class="blue-cell">勞動條件</td><td>工時、工資、休假</td><td>勞動基準法</td></tr>
+          <tr><td class="blue-cell">組織勞工</td><td>工會、集體協商</td><td>工會法、勞資爭議法</td></tr>
+          <tr><td class="green" style="color:var(--green);font-weight:700;">職場安全</td><td>職業災害防護</td><td>職業安全衛生法</td></tr>
+        </table>
+      </div>
+
+      <h4>市場性勞動與家務勞動</h4>
+      <div class="box box-blue">
+        家務勞動（育兒、照護）不被計入GDP，但有重要社會價值；女性承擔比例不均衡（無酬照護工作）。
+      </div>
+
+      <h4>社會安全制度</h4>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>制度</th><th>性質</th><th>說明</th></tr>
+          <tr><td class="red-cell">社會保險</td><td>強制性互助</td><td>健保、勞保、國民年金</td></tr>
+          <tr><td class="blue-cell">社會救助</td><td>資產調查</td><td>低收入戶補助</td></tr>
+          <tr><td class="blue-cell">社會津貼</td><td>普及給付</td><td>育兒津貼、老農津貼</td></tr>
+          <tr><td class="blue-cell">社會服務</td><td>直接服務</td><td>托育、長照</td></tr>
+        </table>
+      </div>
+      <div class="exam-alert">2024年長照2.0持續擴大，「以房養老」政策。<br>勞保年金改革議題持續（財務危機精算）。<br><span class="red">最低工資法2024年正式施行</span>，將基本工資審議法制化，每年第三季審議，確保調薪機制穩定。</div>
+    </div>
+  </div>
+
+  <div class="lesson-block">
+    <div class="lesson-header" onclick="toggleLesson(this)">
+      <div class="lesson-num">7</div><h3>多元文化與全球化</h3><span class="caret">▼</span>
+    </div>
+    <div class="lesson-body">
+      <h4>不同文化如何相處？</h4>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>模式</th><th>說明</th><th>優缺點</th></tr>
+          <tr><td class="red-cell">同化論</td><td>移民融入主流文化</td><td>社會統一但文化多樣性消失</td></tr>
+          <tr><td class="blue-cell">多元文化主義</td><td>各文化平等共存</td><td>保存多樣性但整合挑戰</td></tr>
+          <tr><td class="blue-cell">融合（Melting Pot）</td><td>各文化混合形成新文化</td><td>創新但原文化消融</td></tr>
+          <tr><td class="green" style="color:var(--green);font-weight:700;">跨文化主義</td><td>文化間相互影響學習</td><td>動態平衡（當代趨勢）</td></tr>
+        </table>
+      </div>
+
+      <h4>全球化帶來什麼影響？</h4>
+      <div class="box box-gold">
+        <div class="box-title">全球化利弊</div>
+        <span class="red">利：</span>貿易擴大、知識傳播、技術進步、人口流動<br>
+        <span class="blue">弊：</span>文化同質化、貧富差距加大、跨國企業逃稅、環境代價輸出
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ ECONOMICS 1-7 ============================================================ -->
+<div class="page" id="page-econ1">
+  <div class="book-title" style="background: var(--gold);">
+    <h2>📊 社會不平等與社會運動 <span class="book-badge">主題 E</span></h2>
+    <p>社會階層化 → 社會流動 → 社會運動</p>
+  </div>
+  <div class="lesson-block">
+    <div class="lesson-header open" onclick="toggleLesson(this)">
+      <div class="lesson-num">1</div><h3>社會階層化</h3><span class="caret">▼</span>
+    </div>
+    <div class="lesson-body open">
+      <h4>什麼是社會階層化？</h4>
+      <div class="box box-blue">
+        社會階層化（Social Stratification）：社會成員依財富、聲望、權力等不平等分配所形成的層級結構。
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>理論視角</th><th>代表學者</th><th>主張</th></tr>
+          <tr><td class="red-cell">衝突論</td><td>馬克思</td><td>階層源自生產資料的占有，資本家壓迫工人</td></tr>
+          <tr><td class="blue-cell">功能論</td><td>帕森斯、戴維斯莫爾</td><td>階層是激勵人才的必要機制</td></tr>
+          <tr><td class="blue-cell">韋伯三維論</td><td>韋伯</td><td>財富（經濟）+ 聲望（社會）+ 權力（政治）</td></tr>
+        </table>
+      </div>
+      <h4>社會階層化的面向</h4>
+      <ul class="content-list">
+        <li><span class="red">種族/族群不平等</span>：歧視、隔離</li>
+        <li><span class="red">性別不平等</span>：薪資差距、玻璃天花板</li>
+        <li><span class="blue">城鄉不平等</span>：資源分配差異</li>
+        <li><span class="blue">教育不平等</span>：文化資本差異（布迪厄）</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="lesson-block">
+    <div class="lesson-header" onclick="toggleLesson(this)">
+      <div class="lesson-num">2</div><h3>社會流動</h3><span class="caret">▼</span>
+    </div>
+    <div class="lesson-body">
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>類型</th><th>說明</th><th>例子</th></tr>
+          <tr><td class="red-cell">垂直流動</td><td>社會地位升高或降低</td><td>由工人升為管理者</td></tr>
+          <tr><td class="blue-cell">水平流動</td><td>同等地位間變換</td><td>換同薪水工作</td></tr>
+          <tr><td class="blue-cell">代間流動</td><td>跨世代地位變化</td><td>農民之子成為醫生</td></tr>
+          <tr><td class="blue-cell">代內流動</td><td>同一生命歷程中</td><td>工人升主管</td></tr>
+          <tr><td class="green" style="color:var(--green);font-weight:700;">結構性流動</td><td>產業結構改變造成的整體流動</td><td>工業化後職業升級</td></tr>
+        </table>
+      </div>
+      <div class="box box-red">
+        <div class="box-title">🔴 影響社會流動的因素</div>
+        社會流動的管道：教育、婚姻、軍隊、宗教<br>
+        阻礙流動的因素：種族歧視、家庭背景、文化資本不足
+      </div>
+      <h4>社會轉型與階層流動</h4>
+      <div class="box box-gold">
+        台灣戰後工業化推動大規模向上流動（農民→工人→中產）。近年貧富差距擴大，M型社會現象。
+      </div>
+    </div>
+  </div>
+
+  <div class="lesson-block">
+    <div class="lesson-header" onclick="toggleLesson(this)">
+      <div class="lesson-num">3</div><h3>社會運動</h3><span class="caret">▼</span>
+    </div>
+    <div class="lesson-body">
+      <h4>什麼是社會運動？</h4>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>特徵</th><th>說明</th></tr>
+          <tr><td class="blue-cell">集體行動</td><td>大量人員參與</td></tr>
+          <tr><td class="blue-cell">持續性</td><td>非偶發，有組織策略</td></tr>
+          <tr><td class="red-cell">目標指向</td><td>訴求社會或政治改變</td></tr>
+          <tr><td class="blue-cell">挑戰現存</td><td>針對制度、規範或政策</td></tr>
+        </table>
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>社會運動理論</th><th>說明</th></tr>
+          <tr><td class="red-cell">資源動員論</td><td>運動成功取決於資源取得（錢、人、組織）</td></tr>
+          <tr><td class="blue-cell">政治機會結構</td><td>政治環境開放度影響運動成敗</td></tr>
+          <tr><td class="blue-cell">框架理論</td><td>運動如何建構訴求，影響認同與動員</td></tr>
+          <tr><td class="green" style="color:var(--green);font-weight:700;">新社會運動</td><td>身份認同為核心（女權、環保、LGBTQ）</td></tr>
+        </table>
+      </div>
+      <h4>台灣的社會運動</h4>
+      <ul class="content-list">
+        <li>1986年黨外運動→民主化</li>
+        <li>1990年野百合學運</li>
+        <li>2014年太陽花運動（反服貿）</li>
+        <li>2019年婚姻平權公投與立法</li>
+        <li><span class="red">2024–2025 AI倫理、能源轉型、居住正義等新議題</span></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="page" id="page-econ2">
+  <div class="book-title" style="background: var(--gold);">
+    <h2>📊 市場交易、需求與供給 <span class="book-badge">主題 B</span></h2>
+    <p>市場交易 → 資源分配 → 需求 → 供給 → 均衡</p>
+  </div>
+  <div class="lesson-block">
+    <div class="lesson-header open" onclick="toggleLesson(this)">
+      <div class="lesson-num">1</div><h3>市場交易與專業分工</h3><span class="caret">▼</span>
+    </div>
+    <div class="lesson-body open">
+      <h4>市場交易與資源分配</h4>
+      <div class="box box-blue">
+        <div class="box-title">市場的定義</div>
+        買賣雙方進行交易的場所（實體或虛擬）。<span class="red">價格機制</span>協調供需，分配有限資源。
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>資源種類</th><th>說明</th><th>報酬</th></tr>
+          <tr><td class="red-cell">土地</td><td>自然資源</td><td>地租</td></tr>
+          <tr><td class="blue-cell">勞動</td><td>人力投入</td><td>工資</td></tr>
+          <tr><td class="blue-cell">資本</td><td>生產設備、資金</td><td>利息/利潤</td></tr>
+          <tr><td class="blue-cell">企業才能</td><td>組織、創新</td><td>利潤</td></tr>
+        </table>
+      </div>
+
+      <h4>廠商如何決定資源的用途？</h4>
+      <div class="box box-gold">
+        <div class="box-title">機會成本</div>
+        選擇某一用途放棄的最高價值替代方案。決策應考量<span class="red">邊際</span>概念：邊際收益 vs 邊際成本。
+      </div>
+
+      <h4>專業分工的影響</h4>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>優點</th><th>缺點</th></tr>
+          <tr><td class="blue-cell">提高生產效率（亞當斯密針工廠案例）</td><td class="red-cell">工作重複單調、技能窄化</td></tr>
+          <tr><td>降低生產成本</td><td>相互依賴風險</td></tr>
+          <tr><td>規模經濟</td><td>供應鏈斷鏈風險</td></tr>
+        </table>
+      </div>
+      <div class="box box-blue"><div class="box-title">比較利益法則</div>各國生產相對成本較低的產品進行貿易，雙方皆可獲益。（李嘉圖提出）</div>
+    </div>
+  </div>
+  <div class="lesson-block">
+    <div class="lesson-header" onclick="toggleLesson(this)">
+      <div class="lesson-num">2</div><h3>需求與供給</h3><span class="caret">▼</span>
+    </div>
+    <div class="lesson-body">
+      <h4>需求法則</h4>
+      <div class="box box-red">
+        <div class="box-title">需求定義</div>
+        在特定時間，消費者<span class="red">願意且有能力</span>購買的各種價格下的數量。<br>
+        <span class="bold">需求法則：價格↑ → 需求量↓（反向關係）</span>
+      </div>
+      <h4>需求變動因素（非價格因素→整條曲線移動）</h4>
+      <ul class="content-list">
+        <li><span class="red">消費者所得</span>：正常財所得↑→需求↑；劣等財所得↑→需求↓</li>
+        <li><span class="red">相關財貨價格</span>：替代品價格↑→需求↑；互補品價格↑→需求↓</li>
+        <li>消費者偏好</li>
+        <li>消費者人數</li>
+        <li>預期未來價格</li>
+      </ul>
+
+      <h4>供給法則</h4>
+      <div class="box box-blue">
+        <div class="box-title">供給定義</div>
+        廠商<span class="blue">願意且有能力</span>提供的各種價格下的數量。<br>
+        <span class="bold">供給法則：價格↑ → 供給量↑（同向關係）</span>
+      </div>
+      <h4>供給變動因素</h4>
+      <ul class="content-list">
+        <li><span class="red">生產要素成本</span>：工資、原料↑ → 供給↓</li>
+        <li>技術進步 → 供給↑</li>
+        <li>政府政策（稅收/補貼）</li>
+        <li>廠商預期</li>
+        <li>廠商數量</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="page" id="page-econ3">
+  <div class="book-title" style="background: var(--gold);">
+    <h2>📊 市場機能與政府介入 <span class="book-badge">主題 B</span></h2>
+    <p>均衡價格 → 市場效率 → 政府干預（最高/最低價格）→ 個別/聯合訂價</p>
+  </div>
+  <div class="lesson-block">
+    <div class="lesson-header open" onclick="toggleLesson(this)">
+      <div class="lesson-num">1</div><h3>市場機能</h3><span class="caret">▼</span>
+    </div>
+    <div class="lesson-body open">
+      <h4>市場價格如何決定？</h4>
+      <div class="box box-blue">
+        <div class="box-title">均衡價格（市場出清）</div>
+        供給量 = 需求量時的價格。<br>
+        超額需求（短缺）→ 價格上升；超額供給（剩餘）→ 價格下降。
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>變動情形</th><th>均衡量</th><th>均衡價格</th></tr>
+          <tr><td>需求↑（曲線右移）</td><td class="blue-cell">↑</td><td class="red-cell">↑</td></tr>
+          <tr><td>需求↓（曲線左移）</td><td class="blue-cell">↓</td><td class="red-cell">↓</td></tr>
+          <tr><td>供給↑（曲線右移）</td><td class="blue-cell">↑</td><td class="red-cell">↓</td></tr>
+          <tr><td>供給↓（曲線左移）</td><td class="blue-cell">↓</td><td class="red-cell">↑</td></tr>
+        </table>
+      </div>
+      <h4>市場均衡與經濟效率</h4>
+      <div class="box box-green">完全競爭市場可達到<span class="red">柏拉圖效率</span>：無法在不損害任何人情況下改善他人福利。消費者剩餘 + 生產者剩餘 = 最大社會福利。</div>
+    </div>
+  </div>
+  <div class="lesson-block">
+    <div class="lesson-header" onclick="toggleLesson(this)">
+      <div class="lesson-num">2</div><h3>政府對市場的介入</h3><span class="caret">▼</span>
+    </div>
+    <div class="lesson-body">
+      <div class="tbl-wrap">
+        <table>
+          <tr><th class="compare-hdr">項目</th><th class="compare-hdr">最高價格（價格上限）</th><th class="compare-hdr">最低價格（價格下限）</th></tr>
+          <tr><td class="bold">設定條件</td><td>低於均衡價格</td><td>高於均衡價格</td></tr>
+          <tr><td class="bold">目的</td><td>保護消費者（抑制房租）</td><td>保護生產者（保障糧價/最低工資）</td></tr>
+          <tr><td class="bold">後果</td><td class="red-cell">短缺（超額需求）</td><td class="red-cell">剩餘（超額供給）</td></tr>
+          <tr><td class="bold">例子</td><td>租金管制、限購令</td><td>最低工資、農產品保證收購價</td></tr>
+        </table>
+      </div>
+      <div class="exam-alert">最低工資：設定在均衡工資之上 → 形成<span class="red">失業（超額勞動供給）</span>。<br>
+      台灣基本工資連續調漲（依《最低工資法》）：2024→27,470元 ▸ 2025→28,590元 ▸ <span class="red">2026→29,500元（時薪196元）</span>，2026年為最低工資法第2次適用。</div>
+      <h4>廠商個別訂價與聯合訂價</h4>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>類型</th><th>說明</th><th>影響</th></tr>
+          <tr><td class="blue-cell">完全競爭</td><td>個別廠商為價格接受者</td><td>市場效率最高</td></tr>
+          <tr><td class="blue-cell">獨占</td><td>單一廠商制定價格</td><td>產量少、價格高、無謂損失</td></tr>
+          <tr><td class="red-cell">聯合訂價（卡特爾）</td><td>廠商共謀制定高價</td><td>類似獨占，違反公平交易法</td></tr>
+          <tr><td class="blue-cell">寡占</td><td>少數廠商主導市場</td><td>策略互動（賽局理論）</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="page" id="page-econ4">
+  <div class="book-title" style="background: var(--gold);">
+    <h2>📊 物價膨脹、GDP 與景氣波動 <span class="book-badge">主題 F</span></h2>
+    <p>CPI → 通貨膨脹/緊縮 → GDP → 景氣循環 → 失業</p>
+  </div>
+  <div class="lesson-block">
+    <div class="lesson-header open" onclick="toggleLesson(this)">
+      <div class="lesson-num">1</div><h3>物價膨脹與經濟成長</h3><span class="caret">▼</span>
+    </div>
+    <div class="lesson-body open">
+      <h4>如何衡量生活成本的變動？</h4>
+      <div class="box box-blue">
+        <div class="box-title">消費者物價指數（CPI）</div>
+        衡量一般家庭購買的商品籃子價格變化。<br>
+        CPI = (當期商品籃子費用 / 基期費用) × 100
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>現象</th><th>定義</th><th>影響</th></tr>
+          <tr><td class="red-cell">通貨膨脹</td><td>物價持續上漲（CPI↑）</td><td>貨幣購買力下降</td></tr>
+          <tr><td class="blue-cell">通貨緊縮</td><td>物價持續下降（CPI↓）</td><td>延遲消費、經濟衰退</td></tr>
+          <tr><td class="blue-cell">停滯性通膨</td><td>高通膨 + 低成長 + 高失業</td><td>最難處理</td></tr>
+        </table>
+      </div>
+      <div class="box box-red">
+        <div class="box-title">通貨膨脹的原因</div>
+        ①需求拉動（AD↑）②成本推動（供給成本↑）③貨幣數量過多（M↑）
+      </div>
+      <h4>如何衡量一國實質GDP與經濟成長？</h4>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>名詞</th><th>說明</th></tr>
+          <tr><td class="red-cell">名目GDP</td><td>當期價格計算，包含物價變動</td></tr>
+          <tr><td class="blue-cell">實質GDP</td><td>固定基期價格，排除物價因素，真實成長</td></tr>
+          <tr><td class="blue-cell">GDP平減指數</td><td>名目GDP / 實質GDP × 100</td></tr>
+          <tr><td class="blue-cell">GNP vs GDP</td><td>GDP：境內；GNP：國民（不分境內外）</td></tr>
+        </table>
+      </div>
+      <div class="box box-gold">
+        <div class="box-title">GDP的限制</div>
+        不計算：家務勞動、非市場活動、所得分配、環境品質、幸福感
+      </div>
+    </div>
+  </div>
+  <div class="lesson-block">
+    <div class="lesson-header" onclick="toggleLesson(this)">
+      <div class="lesson-num">2</div><h3>勞動、失業與景氣</h3><span class="caret">▼</span>
+    </div>
+    <div class="lesson-body">
+      <h4>勞動市場</h4>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>失業類型</th><th>原因</th><th>政策回應</th></tr>
+          <tr><td class="red-cell">摩擦性失業</td><td>換工作尋找期間</td><td>就業媒合（正常現象）</td></tr>
+          <tr><td class="blue-cell">結構性失業</td><td>技術/產業結構改變</td><td>職業訓練、再教育</td></tr>
+          <tr><td class="red-cell">循環性失業</td><td>景氣衰退需求下降</td><td>財政/貨幣政策刺激需求</td></tr>
+          <tr><td class="blue-cell">季節性失業</td><td>季節性產業</td><td>多元就業方案</td></tr>
+        </table>
+      </div>
+      <div class="box box-blue">
+        <div class="box-title">自然失業率</div>
+        僅含摩擦性+結構性失業，無循環性失業時的失業率 ≈ 充分就業。
+      </div>
+      <h4>景氣波動（景氣循環）</h4>
+      <div class="flow">
+        <div class="flow-step">擴張</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step red">高峰</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">衰退</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step gold">谷底</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step green">復甦</div>
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>景氣指標</th><th>說明</th><th>例子</th></tr>
+          <tr><td class="blue-cell">領先指標</td><td>景氣前6~9個月</td><td>股價、建築許可、存貨</td></tr>
+          <tr><td class="blue-cell">同時指標</td><td>同步反映景氣</td><td>工業生產、就業人數</td></tr>
+          <tr><td class="blue-cell">落後指標</td><td>景氣後</td><td>失業率、利率</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="page" id="page-econ5">
+  <div class="book-title" style="background: var(--gold);">
+    <h2>📊 可貸資金市場與貨幣政策 <span class="book-badge">主題 F</span></h2>
+  </div>
+  <div class="lesson-block">
+    <div class="lesson-header open" onclick="toggleLesson(this)">
+      <div class="lesson-num">1</div><h3>可貸資金市場與利率</h3><span class="caret">▼</span>
+    </div>
+    <div class="lesson-body open">
+      <h4>可貸資金市場</h4>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>供給來源</th><th>需求來源</th><th>均衡</th></tr>
+          <tr><td class="blue-cell">儲蓄（家戶、企業）</td><td class="red-cell">投資（廠商借貸）</td><td>利率 = 儲蓄量 = 投資量</td></tr>
+          <tr><td>政府盈餘</td><td>政府赤字（借款）</td><td>—</td></tr>
+          <tr><td>外國資本流入</td><td>外國資本流出</td><td>—</td></tr>
+        </table>
+      </div>
+      <div class="box box-red">
+        <div class="box-title">利率決定</div>
+        利率 = 可貸資金的「價格」<br>
+        政府赤字↑ → 可貸資金需求↑ → 利率↑ → 排擠民間投資（<span class="red">排擠效果</span>）
+      </div>
+      <h4>中央銀行與貨幣政策</h4>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>工具</th><th>說明</th><th>緊縮效果</th></tr>
+          <tr><td class="red-cell">重貼現率</td><td>央行向商銀貸款的利率</td><td>↑ → 銀行借款成本↑ → 貸款↓</td></tr>
+          <tr><td class="blue-cell">存款準備率</td><td>銀行必須保留的存款比例</td><td>↑ → 信用創造↓</td></tr>
+          <tr><td class="blue-cell">公開市場操作</td><td>央行買賣政府債券</td><td>賣債券 → 貨幣供給↓</td></tr>
+        </table>
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>政策目標</th><th>寬鬆貨幣政策</th><th>緊縮貨幣政策</th></tr>
+          <tr><td>時機</td><td>景氣衰退/通縮</td><td>景氣過熱/通膨</td></tr>
+          <tr><td>操作</td><td>降息、降準備率、買債券</td><td>升息、升準備率、賣債券</td></tr>
+          <tr><td>效果</td><td class="blue-cell">貨幣供給↑、刺激投資消費</td><td class="red-cell">貨幣供給↓、抑制通膨</td></tr>
+        </table>
+      </div>
+      <div class="exam-alert">台灣央行（中央銀行）2024年升息至2%以上，以應對通膨壓力。美聯準會（Fed）降息時序影響台灣貨幣政策走向。</div>
+    </div>
+  </div>
+</div>
+
+<div class="page" id="page-econ6">
+  <div class="book-title" style="background: var(--gold);">
+    <h2>📊 國民所得與國際貿易 <span class="book-badge">主題 F</span></h2>
+  </div>
+  <div class="lesson-block">
+    <div class="lesson-header open" onclick="toggleLesson(this)">
+      <div class="lesson-num">1</div><h3>國民所得與貿易</h3><span class="caret">▼</span>
+    </div>
+    <div class="lesson-body open">
+      <h4>如何衡量國民所得？</h4>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>衡量方法</th><th>說明</th><th>公式</th></tr>
+          <tr><td class="blue-cell">支出法</td><td>GDP = 全國最終支出</td><td>GDP = C + I + G + (X-M)</td></tr>
+          <tr><td class="blue-cell">所得法</td><td>生產要素的報酬加總</td><td>工資+利息+地租+利潤</td></tr>
+          <tr><td class="blue-cell">生產法</td><td>各部門附加價值加總</td><td>避免重複計算</td></tr>
+        </table>
+      </div>
+      <div class="box box-red">
+        <div class="box-title">支出法各項目</div>
+        C：民間消費 ‧ I：投資（廠商設備、存貨、住宅）‧ G：政府支出 ‧ X-M：淨出口（貿易順差/逆差）
+      </div>
+      <h4>為何全球貿易越來越發達？</h4>
+      <div class="box box-blue">比較利益：各國生產機會成本較低的商品，互相貿易皆可獲利（李嘉圖理論）。全球化降低運輸和通訊成本。</div>
+      <h4>貿易開放，誰獲益、誰受害？</h4>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>角色</th><th>貿易開放效果</th></tr>
+          <tr><td class="blue-cell">消費者</td><td class="blue-cell">受益（更多商品選擇、更低價格）</td></tr>
+          <tr><td class="blue-cell">出口廠商</td><td class="blue-cell">受益（市場擴大）</td></tr>
+          <tr><td class="red-cell">受進口競爭廠商</td><td class="red-cell">受害（競爭加劇、可能倒閉）</td></tr>
+          <tr><td class="red-cell">失業勞工</td><td class="red-cell">受害（產業外移）</td></tr>
+        </table>
+      </div>
+      <h4>政府貿易干預工具</h4>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>工具</th><th>機制</th><th>效果</th></tr>
+          <tr><td class="red-cell">關稅</td><td>進口品課稅</td><td>進口↓、國內廠商受保護、消費者損</td></tr>
+          <tr><td class="blue-cell">配額</td><td>限制進口數量</td><td>類似關稅但無稅收</td></tr>
+          <tr><td class="blue-cell">補貼出口</td><td>政府補助出口廠商</td><td>出口競爭力↑，他國可能報復</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="page" id="page-econ7">
+  <div class="book-title" style="background: var(--red);">
+    <h2>⚖️ 私法自治的限制：婚姻財產制與繼承 <span class="book-badge">主題 H</span></h2>
+  </div>
+  <div class="lesson-block">
+    <div class="lesson-header open" onclick="toggleLesson(this)">
+      <div class="lesson-num">1</div><h3>契約自由與私法自治</h3><span class="caret">▼</span>
+    </div>
+    <div class="lesson-body open">
+      <h4>契約自由原則</h4>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>自由面向</th><th>說明</th></tr>
+          <tr><td class="blue-cell">締約自由</td><td>決定是否締結契約</td></tr>
+          <tr><td class="blue-cell">相對人選擇自由</td><td>選擇與誰締約</td></tr>
+          <tr><td class="blue-cell">內容自由</td><td>決定契約內容</td></tr>
+          <tr><td class="blue-cell">方式自由</td><td>口頭或書面</td></tr>
+        </table>
+      </div>
+      <h4>契約正義的限制（私法自治的限制）</h4>
+      <ul class="content-list">
+        <li><span class="red">定型化契約</span>：企業提供消費者沒有協商空間的標準契約，需遵守消保法</li>
+        <li><span class="red">顯失公平條款無效</span>：民法第247-1條</li>
+        <li>勞動契約受勞基法保護（最低工資、工時限制）</li>
+      </ul>
+      <h4>法定夫妻財產制（法定：聯合財產制→法定夫妻財產制修正）</h4>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>財產制</th><th>說明</th><th>特色</th></tr>
+          <tr><td class="red-cell">法定財產制（現行預設）</td><td>各自管理財產，剩餘財產平均分配</td><td>婚後所得平等分享</td></tr>
+          <tr><td class="blue-cell">共同財產制</td><td>婚後財產合為公同共有</td><td>需登記</td></tr>
+          <tr><td class="blue-cell">分別財產制</td><td>各自財產各自管理</td><td>需登記</td></tr>
+        </table>
+      </div>
+      <div class="exam-alert">法定財產制下離婚時：婚後所得扣除債務，剩餘財產較多者補償較少者（剩餘財產差額平均分配請求權）</div>
+
+      <h4>繼承制度</h4>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>繼承順序</th><th>親屬</th><th>特別身份</th></tr>
+          <tr><td class="red-cell">第一順位</td><td>直系血親卑親屬（子女）</td><td>配偶恆為繼承人</td></tr>
+          <tr><td class="blue-cell">第二順位</td><td>父母（被繼承人之父母）</td><td>—</td></tr>
+          <tr><td class="blue-cell">第三順位</td><td>兄弟姊妹</td><td>—</td></tr>
+          <tr><td class="blue-cell">第四順位</td><td>祖父母</td><td>—</td></tr>
+        </table>
+      </div>
+      <div class="box box-blue"><div class="box-title">配偶應繼分</div>與第一順位：各二分之一；與第二順位：二分之一；與第三順位：三分之二；與第四順位：三分之三（全部）</div>
+      <div class="box box-red"><div class="box-title">特留分（不可剝奪的最低繼承額）</div>
+        直系血親卑親屬、配偶：應繼分之二分之一<br>
+        父母、兄弟姊妹、祖父母：應繼分之三分之一
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ DEMO POLITICS ============================================================ -->
+<div class="page" id="page-demo1">
+  <div class="book-title" style="background: var(--blue);">
+    <h2>🌏 民主政治的變遷 <span class="book-badge">主題 G</span><span class="book-badge">選修加深</span></h2>
+    <p>審議民主 → 代議民主 → 公民不服從</p>
+  </div>
+  <div class="lesson-block">
+    <div class="lesson-header open" onclick="toggleLesson(this)">
+      <div class="lesson-num">1</div><h3>民主政治變遷與公民不服從</h3><span class="caret">▼</span>
+    </div>
+    <div class="lesson-body open">
+      <h4>審議民主與代議民主的比較</h4>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th class="compare-hdr">項目</th><th class="compare-hdr">代議民主</th><th class="compare-hdr">審議民主</th></tr>
+          <tr><td>決策方式</td><td>選出代表決策</td><td>公民直接審議討論</td></tr>
+          <tr><td>優點</td><td>效率高，專業化</td><td>充分民意，說理論辯</td></tr>
+          <tr><td>缺點</td><td>代表可能背離民意</td><td>耗時，難大規模實施</td></tr>
+          <tr><td>例子</td><td>立法院、議會</td><td>公民陪審、審議論壇</td></tr>
+        </table>
+      </div>
+      <h4>公民不服從（Civil Disobedience）</h4>
+      <div class="box box-red">
+        <div class="box-title">公民不服從定義（梭羅→金恩→羅爾斯）</div>
+        公開、非暴力、基於良心的違法行為，目的在抗議不正義法律或政策，並接受法律制裁。
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>條件</th><th>說明</th></tr>
+          <tr><td class="red-cell">目的</td><td>具有公共性（非個人私利）</td></tr>
+          <tr><td class="blue-cell">方式</td><td>非暴力、公開</td></tr>
+          <tr><td class="blue-cell">對象</td><td>明顯不正義</td></tr>
+          <tr><td class="red-cell">態度</td><td>願意承擔法律後果（表誠信）</td></tr>
+          <tr><td class="blue-cell">最後手段</td><td>已窮盡合法管道</td></tr>
+        </table>
+      </div>
+      <div class="exam-alert">太陽花運動（2014）是否符合公民不服從？考試常考：公民不服從的「接受制裁」要素。</div>
+    </div>
+  </div>
+</div>
+
+<div class="page" id="page-demo2">
+  <div class="book-title" style="background: var(--blue);">
+    <h2>🌏 中國政治與區域和平 <span class="book-badge">主題 G</span></h2>
+  </div>
+  <div class="lesson-block">
+    <div class="lesson-header open" onclick="toggleLesson(this)">
+      <div class="lesson-num">1</div><h3>中國政治體制</h3><span class="caret">▼</span>
+    </div>
+    <div class="lesson-body open">
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>項目</th><th>說明</th></tr>
+          <tr><td class="red-cell">政治體制</td><td>中共一黨執政、無競爭性選舉</td></tr>
+          <tr><td class="blue-cell">最高權力</td><td>中共中央政治局常委會（7人）</td></tr>
+          <tr><td class="blue-cell">國家主席</td><td>習近平（2012年至今，2018年修憲取消任期限制）</td></tr>
+          <tr><td class="blue-cell">全國人民代表大會</td><td>名義最高立法機關，實質缺乏獨立性</td></tr>
+        </table>
+      </div>
+      <h4>兩岸關係挑戰（2024–2025）</h4>
+      <div class="box box-red">
+        <div class="box-title">🔴 最新局勢（需持續關注）</div>
+        2024年台灣總統大選：賴清德當選（民進黨）。中共軍演持續。<br>
+        兩岸官方交流中斷，海基海協溝通管道停止。美台《台灣關係法》持續有效。
+      </div>
+      <h4>區域和平架構</h4>
+      <ul class="content-list">
+        <li>ASEAN（東協）：區域安全合作</li>
+        <li>美日安保條約</li>
+        <li>《台灣關係法》（1979）：美國對台安全承諾</li>
+        <li>《印太經濟框架》（IPEF）2022年啟動</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="page" id="page-demo3">
+  <div class="book-title" style="background: var(--blue);">
+    <h2>🌍 國際政治與世界秩序 <span class="book-badge">主題 G</span></h2>
+  </div>
+  <div class="lesson-block">
+    <div class="lesson-header open" onclick="toggleLesson(this)">
+      <div class="lesson-num">1</div><h3>國際秩序的形成</h3><span class="caret">▼</span>
+    </div>
+    <div class="lesson-body open">
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>理論</th><th>主張</th><th>代表</th></tr>
+          <tr><td class="red-cell">現實主義</td><td>國家利益、權力政治、安全兩難</td><td>摩根索</td></tr>
+          <tr><td class="blue-cell">自由主義</td><td>相互依賴、國際組織、民主和平論</td><td>康德</td></tr>
+          <tr><td class="blue-cell">建構主義</td><td>身份、規範、文化決定利益</td><td>溫特</td></tr>
+        </table>
+      </div>
+      <h4>國際組織</h4>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>組織</th><th>成立</th><th>功能</th><th>台灣</th></tr>
+          <tr><td class="blue-cell">聯合國（UN）</td><td>1945</td><td>安全、人道、法律</td><td class="red-cell">非會員</td></tr>
+          <tr><td class="blue-cell">WTO</td><td>1995</td><td>貿易規則</td><td class="blue-cell">會員（台澎金馬）</td></tr>
+          <tr><td class="blue-cell">IMF</td><td>1945</td><td>金融穩定</td><td class="red-cell">非會員</td></tr>
+          <tr><td class="blue-cell">WHO</td><td>1948</td><td>全球衛生</td><td class="red-cell">觀察員遭阻</td></tr>
+        </table>
+      </div>
+      <h4>全球化與區域化</h4>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>區域整合</th><th>代表</th></tr>
+          <tr><td class="blue-cell">歐盟（EU）</td><td>最深度整合：共同貨幣、法律</td></tr>
+          <tr><td class="blue-cell">ASEAN</td><td>東南亞10國：主權自主原則</td></tr>
+          <tr><td class="blue-cell">RCEP</td><td>2022年生效，最大貿易協定</td></tr>
+          <tr><td class="blue-cell">CPTPP</td><td>台灣2021年申請加入，進行中</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="page" id="page-demo4">
+  <div class="book-title" style="background: var(--red);">
+    <h2>⚖️ 釋憲制度與人權保障 <span class="book-badge">主題 H</span></h2>
+  </div>
+  <div class="lesson-block">
+    <div class="lesson-header open" onclick="toggleLesson(this)">
+      <div class="lesson-num">1</div><h3>釋憲制度</h3><span class="caret">▼</span>
+    </div>
+    <div class="lesson-body open">
+      <h4>什麼是釋憲制度？</h4>
+      <div class="box box-blue">
+        由大法官（憲法法庭）審查法律是否違憲，保障人民基本權利不受侵害。
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>制度</th><th>舊制（司法院大法官解釋）</th><th>新制（憲法法庭）<span class="new-badge">2022年起</span></th></tr>
+          <tr><td>決定名稱</td><td>大法官解釋（釋字）</td><td class="red-cell">憲法裁判</td></tr>
+          <tr><td>決定形式</td><td>解釋文</td><td>裁判書（多數意見/協同/不同意見書）</td></tr>
+          <tr><td>廢止條文效力</td><td>即時失效</td><td>可設過渡期</td></tr>
+        </table>
+      </div>
+      <div class="exam-alert">2022年憲訴法修正，大法官解釋改為「憲法裁判」，須達法定人數（現役大法官2/3以上同意）</div>
+
+      <h4>如何聲請憲審？</h4>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>聲請人</th><th>條件</th></tr>
+          <tr><td class="blue-cell">人民（法規範憲法審查）</td><td>窮盡審級救濟後，確定終局裁判所適用法規違憲</td></tr>
+          <tr><td class="blue-cell">法院</td><td>訴訟中認法律違憲，裁定停止訴訟聲請</td></tr>
+          <tr><td class="blue-cell">立法院/總統/行政院等</td><td>特定憲法爭議</td></tr>
+        </table>
+      </div>
+
+      <h4>大法官解釋對人權保障的影響（重要釋字）</h4>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>釋字</th><th>議題</th><th>重要性</th></tr>
+          <tr><td class="red-cell">748號</td><td>同性婚姻合法化</td><td>2017年，2年內立法保障</td></tr>
+          <tr><td class="blue-cell">603號</td><td>指紋建檔違憲</td><td>資訊自決權</td></tr>
+          <tr><td class="blue-cell">689號</td><td>新聞採訪自由</td><td>跟拍罪違憲</td></tr>
+          <tr><td class="blue-cell">112年憲判字第9號</td><td>死刑合憲但附條件</td><td class="red-cell">2024年最新！死刑須限縮適用</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="page" id="page-demo5">
+  <div class="book-title" style="background: var(--red);">
+    <h2>⚖️ 行政行為與法律救濟 <span class="book-badge">主題 H</span></h2>
+  </div>
+  <div class="lesson-block">
+    <div class="lesson-header open" onclick="toggleLesson(this)">
+      <div class="lesson-num">1</div><h3>行政行為的公益性與合法性</h3><span class="caret">▼</span>
+    </div>
+    <div class="lesson-body open">
+      <h4>行政行為合法性要件</h4>
+      <ul class="content-list">
+        <li><span class="red">法律保留</span>：侵害人民權益必須有法律依據</li>
+        <li><span class="red">比例原則</span>：手段符合目的，不過度</li>
+        <li><span class="blue">平等原則</span>：相同情形相同對待</li>
+        <li><span class="blue">信賴保護</span>：人民合理信賴政府行為受保護</li>
+      </ul>
+      <h4>行政處分的合法性</h4>
+      <div class="box box-blue">行政處分：行政機關就特定事項所為具體決定，對特定人發生效力（如：吊銷執照、拆除建物）</div>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>合法要件</th><th>違反後果</th></tr>
+          <tr><td class="red-cell">程序合法（告知、聽證）</td><td>撤銷或廢止</td></tr>
+          <tr><td class="blue-cell">實體合法（有法律依據）</td><td>撤銷</td></tr>
+          <tr><td class="blue-cell">裁量合法（不逾越範圍）</td><td>違法裁量可撤銷</td></tr>
+        </table>
+      </div>
+      <h4>國家賠償與補償責任</h4>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th></th><th>國家賠償</th><th>損失補償</th></tr>
+          <tr><td>原因</td><td class="red-cell">違法公權力行使</td><td class="blue-cell">合法公權力但造成特別損失</td></tr>
+          <tr><td>法律依據</td><td>國家賠償法</td><td>各特別法（如土地徵收）</td></tr>
+          <tr><td>例子</td><td>警察違法搜索</td><td>公共工程徵地</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="page" id="page-demo6">
+  <div class="book-title" style="background: var(--red);">
+    <h2>⚖️ 民事關係與權利保障 <span class="book-badge">主題 H</span></h2>
+  </div>
+  <div class="lesson-block">
+    <div class="lesson-header open" onclick="toggleLesson(this)">
+      <div class="lesson-num">1</div><h3>各式各樣的民事權利</h3><span class="caret">▼</span>
+    </div>
+    <div class="lesson-body open">
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>權利類型</th><th>說明</th><th>例子</th></tr>
+          <tr><td class="red-cell">物權</td><td>直接支配物的權利</td><td>所有權、地上權、抵押權</td></tr>
+          <tr><td class="blue-cell">債權</td><td>請求他人履行義務</td><td>買賣契約、借貸</td></tr>
+          <tr><td class="blue-cell">人格權</td><td>與人格不可分</td><td>生命、姓名、名譽、隱私</td></tr>
+          <tr><td class="blue-cell">身份權</td><td>基於特定身份</td><td>親權、配偶權</td></tr>
+          <tr><td class="blue-cell">智慧財產權</td><td>創作成果</td><td>著作權、商標、專利</td></tr>
+        </table>
+      </div>
+      <h4>個人權利保障與公益的衡量</h4>
+      <div class="box box-blue">財產權限制：徵收必須依法、基於公益、給予正當補償（憲法§15）。</div>
+      <h4>我們該如何保障自己的權利？</h4>
+      <div class="flow">
+        <div class="flow-step">協商調解</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step gold">調解委員會</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step green">仲裁</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step red">民事訴訟</div>
+      </div>
+      <div class="box box-red"><div class="box-title">消滅時效</div>
+        一般請求權：15年。侵權行為損害賠償：知悉後2年，最長10年。
+        消費者保護法損害賠償：知悉後3年，最長7年。
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="page" id="page-demo7">
+  <div class="book-title" style="background: var(--red);">
+    <h2>⚖️ 資訊生活與刑法 <span class="book-badge">主題 H</span></h2>
+  </div>
+  <div class="lesson-block">
+    <div class="lesson-header open" onclick="toggleLesson(this)">
+      <div class="lesson-num">1</div><h3>資訊生活的法律規範</h3><span class="caret">▼</span>
+    </div>
+    <div class="lesson-body open">
+      <h4>資訊生活為何要有法規範？</h4>
+      <div class="box box-blue">數位環境帶來隱私侵害、詐騙、散布假訊息、網路霸凌等問題，需要法律保護。</div>
+      <h4>資訊生活中的人際互動與個人權利</h4>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>議題</th><th>相關法律</th><th>說明</th></tr>
+          <tr><td class="red-cell">個人資料保護</td><td>個人資料保護法</td><td>蒐集、處理、利用需當事人同意</td></tr>
+          <tr><td class="blue-cell">網路誹謗</td><td>刑法§310</td><td>散布不實言論損害名譽</td></tr>
+          <tr><td class="blue-cell">網路霸凌</td><td>兒少法、刑法</td><td>持續騷擾行為</td></tr>
+          <tr><td class="red-cell">深偽/Deepfake</td><td class="red-cell">性影像保護法<span class="new-badge">2023新法</span></td><td>AI生成不實影像的法律保護</td></tr>
+        </table>
+      </div>
+      <h4>娛樂生活與著作權</h4>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>著作種類</th><th>保護期間</th></tr>
+          <tr><td class="blue-cell">一般著作</td><td>著作人終身 + 死後50年</td></tr>
+          <tr><td class="blue-cell">攝影、視聽、表演</td><td>公開發表後50年</td></tr>
+          <tr><td class="blue-cell">法人著作</td><td>公開發表後50年</td></tr>
+        </table>
+      </div>
+      <div class="box box-red"><div class="box-title">合理使用（不侵權情形）</div>
+        教育目的少量引用、評論引用、個人非商業使用——需綜合考量四要素（目的、性質、比例、市場影響）
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ NEW LAWS ============================================================ -->
+<div class="page" id="page-new-laws">
+  <div class="book-title" style="background: var(--red);">
+    <h2>🔴 台灣 2024–2026 重大修法與新法 <span class="new-badge">最新</span></h2>
+    <p>分科測驗必考時事法規整理 ── 法條精確版</p>
+  </div>
+
+  <!-- BLOCK A: 勞動 -->
+  <div class="lesson-block">
+    <div class="lesson-header open" onclick="toggleLesson(this)">
+      <div class="lesson-num">A</div><h3>勞動與薪資法規</h3><span class="caret">▼</span>
+    </div>
+    <div class="lesson-body open">
+      <h4>最低工資法（2024年正式施行）<span class="new-badge">重要</span></h4>
+      <div class="box box-red">
+        <div class="box-title">🔴 最低工資法 vs 舊制基本工資的差異</div>
+        舊制：每年由勞動部「基本工資審議委員會」審議，沒有法律強制規定調整機制。<br>
+        新制：《最低工資法》2024年1月1日施行，<span class="red">法制化</span>調整機制，與CPI（消費者物價指數）及勞動生產力指數掛鉤。每年第3季審議，每年都要審議一次，違者最高罰<span class="red">150萬</span>。
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>年度</th><th>月薪（最低工資）</th><th>時薪</th><th>調幅</th><th>備注</th></tr>
+          <tr><td>2024年</td><td>27,470 元</td><td>183 元</td><td>+3.85%</td><td>最低工資法施行首年</td></tr>
+          <tr><td>2025年</td><td>28,590 元</td><td>190 元</td><td>+4.08%</td><td>最低工資法第1次適用</td></tr>
+          <tr><td class="red-cell">2026年</td><td class="red-cell">29,500 元</td><td class="red-cell">196 元</td><td class="red-cell">+3.18%</td><td class="red-cell">最低工資法第2次適用；連續第10年調漲</td></tr>
+        </table>
+      </div>
+      <div class="box box-blue">
+        <div class="box-title">與公民考科的連結</div>
+        ①最低工資 = 政府介入市場（價格下限）→ 超過均衡工資 → 產生超額勞動供給（失業）<br>
+        ②正外部性：保障弱勢勞工基本生活；負外部性：可能增加雇主成本、部分廠商裁員<br>
+        ③勞基法§21：最低工資法為其上位法
+      </div>
+    </div>
+  </div>
+
+  <!-- BLOCK B: 刑法 -->
+  <div class="lesson-block">
+    <div class="lesson-header open" onclick="toggleLesson(this)">
+      <div class="lesson-num">B</div><h3>刑法重大修正</h3><span class="caret">▼</span>
+    </div>
+    <div class="lesson-body open">
+      <h4>虐殺兒童罪新增（刑法§272之1）<span class="new-badge">2025新法</span></h4>
+      <div class="box box-red">
+        <div class="box-title">🔴 背景：剴剴案</div>
+        2024年爆發的「剴剴案」（嬰兒遭保姆虐死），引發社會憤怒。立法院修法認定「虐殺」有別於一般殺人，另設更重刑責的新罪（§272之1）。<br>
+        此案涉及：虐待兒童罪（§286）、殺人罪（§271）的競合，以及社工訪視制度疏漏。<br>
+        <span class="red">考試連結：外部性（虐兒成本由社會承擔）、行政疏失（國家賠償）、政府的保護義務</span>
+      </div>
+
+      <h4>性影像保護法（2023年施行）</h4>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>規定</th><th>說明</th></tr>
+          <tr><td class="red-cell">禁止拍攝、散布</td><td>未經當事人同意拍攝、散布性影像，可判有期徒刑</td></tr>
+          <tr><td class="red-cell">AI合成影像</td><td>以深偽（Deepfake）技術合成他人性影像，同樣受規範</td></tr>
+          <tr><td class="blue-cell">被害人救濟</td><td>可申請法院裁定強制刪除；媒體平台有配合義務</td></tr>
+        </table>
+      </div>
+      <div class="box box-blue">
+        <div class="box-title">與公民考科的連結</div>
+        資訊生活與法律（主題H）、個人隱私權、人格權（§18民法），AI科技對人權的衝擊
+      </div>
+
+      <h4>博愛座改稱「優先席」（2025修法）</h4>
+      <div class="box box-grey">
+        大眾運輸工具原「博愛座」條文修正，正名為「優先席」，明文規定<span class="red">「有實際需要者」皆可乘坐</span>，擴大適用對象，不限老幼婦孺或身心障礙者，也包含隱性需求者（如：孕初期、術後復原等）。
+      </div>
+    </div>
+  </div>
+
+  <!-- BLOCK C: 憲政 -->
+  <div class="lesson-block">
+    <div class="lesson-header open" onclick="toggleLesson(this)">
+      <div class="lesson-num">C</div><h3>憲政與司法重大事件</h3><span class="caret">▼</span>
+    </div>
+    <div class="lesson-body open">
+
+      <h4>📌 死刑有條件合憲裁判（112年憲判字第9號，2024年9月）</h4>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>裁判要點</th><th>詳細說明</th></tr>
+          <tr><td class="red-cell">死刑「有條件」合憲</td><td>死刑本身未違憲，但須嚴格限縮適用條件</td></tr>
+          <tr><td class="red-cell">不得判死刑情形①</td><td>行為時有§19精神障礙（無責任能力或顯著降低）→ 不得判死</td></tr>
+          <tr><td class="red-cell">不得判死刑情形②</td><td>非「情節最重大之罪」不得判死（主觀惡性、手段、後果均須最嚴重）</td></tr>
+          <tr><td class="blue-cell">須考量個人情況</td><td>犯案時智能、成長環境、精神狀況均須納入量刑考量</td></tr>
+          <tr><td class="blue-cell">須全體一致決</td><td>死刑宣告須全體法官一致同意（不能多數決）</td></tr>
+        </table>
+      </div>
+      <div class="box box-blue">
+        <div class="box-title">與公民考科的連結</div>
+        ①基本人權（生命權）vs 國家刑罰權 ②比例原則在刑法的應用 ③廢死vs保留死刑：公民社會論辯 ④兩公約（ICCPR第6條：不得任意剝奪生命）
+      </div>
+
+      <h4>📌 立法院職權行使法爭議（2024年）</h4>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>時間</th><th>事件</th><th>公民考核心概念</th></tr>
+          <tr><td class="red-cell">2024年5月</td><td>立法院藍白聯手，通過強化立院調查權、聽證權、「藐視國會罪」等修法</td><td>分權制衡、議會主權</td></tr>
+          <tr><td class="red-cell">2024年5月</td><td>民進黨提出覆議；行政院長卓榮泰呈請覆議；立院仍維持原決議</td><td>覆議制度（憲法§57）</td></tr>
+          <tr><td class="red-cell">2024年5~6月</td><td>百萬人次「青鳥運動」抗議，涌入立院外示威</td><td>公民不服從、集會自由、言論自由</td></tr>
+          <tr><td class="blue-cell">2024年10月</td><td>憲法法庭113年憲判字第9號：宣告「藐視國會罪」等部分條文<span class="red">違憲</span></td><td>司法審查、違憲審查制度</td></tr>
+        </table>
+      </div>
+
+      <h4>📌 大法官懸缺危機與憲訴法修正（2024–2025年）</h4>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>時間</th><th>事件</th></tr>
+          <tr><td class="red-cell">2024年10月</td><td>7名大法官任期屆滿，憲法法庭僅剩8人</td></tr>
+          <tr><td class="red-cell">2025年1月</td><td>在野黨主導修正《憲法訴訟法》：規定需<span class="red">10名</span>大法官參與評議才能裁判（原為現有總額2/3）</td></tr>
+          <tr><td class="red-cell">2024~2025年</td><td>總統賴清德兩度提名大法官，全數遭立院封殺 → 憲法法庭<span class="red">停擺超過400天</span>，人民失去最後違憲救濟管道</td></tr>
+          <tr><td class="red-cell">2025年12月19日</td><td>5名大法官宣判：《憲訴法》新修正條文<span class="red">違憲</span>（114年憲判字第1號）→ 憲法法庭重新運作</td></tr>
+        </table>
+      </div>
+      <div class="box box-red">
+        <div class="box-title">🔴 最核心概念連結</div>
+        此事件考驗：①<span class="red">分權制衡</span>（立法院能否透過修法架空司法？）②<span class="red">司法獨立</span>（大法官不受政治影響）③<span class="red">憲法法庭的正當性</span>（人數不足時能否裁判？）④<span class="red">公民救濟管道</span>（停擺時人民無從聲請違憲審查）
+      </div>
+
+      <h4>📌 平埔原住民族身份取得（2025年新法）</h4>
+      <div class="box box-blue">
+        依憲法法庭111年憲判第17號，國家應給予平埔原住民族法律保障，要求3年內修法。2025年立法院三讀通過相關法律，西拉雅族、大武壠族等9個平埔族群可申請核定為原住民族，取得原住民身分。<br>
+        <span class="red">連結考科：多元身份認同、原住民族權利、憲法保障平等權</span>
+      </div>
+
+      <h4>📌 青年基本法（2025年通過）</h4>
+      <div class="box box-green">
+        為青年政策的基本框架法，涵蓋教育、就業、居住、身心健康、公共參與等面向，推動「青年主流化」，要求各項政策均納入青年觀點。<br>
+        <span class="red">連結考科：公民參政、世代正義、社會政策</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- BLOCK D: 環境 -->
+  <div class="lesson-block">
+    <div class="lesson-header" onclick="toggleLesson(this)">
+      <div class="lesson-num">D</div><h3>環境與其他法規</h3><span class="caret">▼</span>
+    </div>
+    <div class="lesson-body">
+      <h4>氣候變遷因應法 & 碳費制度（2024–2025）</h4>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>項目</th><th>說明</th></tr>
+          <tr><td class="red-cell">碳費開徵對象</td><td>年排放量≥25,000公噸CO₂e的大型排放源（工廠、電廠等）</td></tr>
+          <tr><td class="blue-cell">費率</td><td>一般費率：300元/公噸（2024年訂定）；優惠費率：自主減量者可適用較低費率</td></tr>
+          <tr><td class="blue-cell">目標</td><td>2030年碳排較2005年減少24%，2050年淨零排放</td></tr>
+        </table>
+      </div>
+      <div class="box box-blue">
+        <div class="box-title">考科連結</div>
+        負外部性（碳排放是汙染的外部成本）→ 碳費 = 政府課稅內部化外部成本（Pigouvian tax）→ 矯正市場失靈
+      </div>
+
+      <h4>個人資料保護法修正（2023–2025）</h4>
+      <div class="box box-blue">
+        強化資料外洩通報義務（72小時內向主管機關通報）、提高罰則（最高罰15萬，修法討論更高）、引入個資保護長制度，對接歐盟GDPR精神。
+      </div>
+
+      <h4>數位中介服務法（持續討論中）</h4>
+      <div class="box box-grey">
+        2022年草案提出，要求大型平台設透明度機制、下架違法內容。因爭議過大（言論自由vs平台責任），目前尚未完成立法，仍在討論階段（截至2026年）。
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- NEW NEWS -->
+<div class="page" id="page-new-news">
+  <div class="book-title" style="background: var(--blue);">
+    <h2>📰 台灣 & 國際 2024–2026 必知時事大全</h2>
+    <p>分科測驗必考時事脈絡 ── 含公民考科關鍵連結</p>
+  </div>
+
+  <!-- TAIWAN -->
+  <div class="lesson-block">
+    <div class="lesson-header open" onclick="toggleLesson(this)">
+      <div class="lesson-num">🇹🇼</div><h3>台灣國內大事（2024–2026）</h3><span class="caret">▼</span>
+    </div>
+    <div class="lesson-body open">
+
+      <h4>⚖️ 政治與憲政</h4>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>時間</th><th>事件</th><th>說明</th><th>公民考核心概念</th></tr>
+          <tr>
+            <td class="red-cell">2024.1</td>
+            <td>第16任總統大選：賴清德當選</td>
+            <td>民進黨賴清德（40.05%）獲勝；國民黨侯友宜（33.49%）、民眾黨柯文哲（26.46%）落選；民進黨三度執政但立院未過半</td>
+            <td>相對多數決、政黨政治、少數政府、行政立法衝突</td>
+          </tr>
+          <tr>
+            <td class="red-cell">2024.5</td>
+            <td>立職法爭議與青鳥運動</td>
+            <td>藍白聯手強行修法→行政院覆議→立院維持→百萬次民眾抗議→憲法法庭部分違憲裁判</td>
+            <td>分權制衡、公民不服從、覆議制度、違憲審查</td>
+          </tr>
+          <tr>
+            <td class="red-cell">2024.9</td>
+            <td>死刑有條件合憲（112年憲判9號）</td>
+            <td>台灣現有37名死刑犯，裁判要求法院重新審視是否符合限縮條件，啟動再審機制</td>
+            <td>生命權、比例原則、刑事正義、廢死辯論</td>
+          </tr>
+          <tr>
+            <td class="red-cell">2024.10</td>
+            <td>大法官7名任期屆滿，憲法法庭陷入懸缺</td>
+            <td>僅剩8名大法官；在野黨封殺提名人選，憲法法庭停擺超過400天</td>
+            <td>司法獨立、分權制衡、人民救濟管道受阻</td>
+          </tr>
+          <tr>
+            <td class="red-cell">2025.1</td>
+            <td>憲訴法新修正：要求10名大法官才能裁判</td>
+            <td>在野黨修法，使憲法法庭實質無法運作，被批評為「架空司法」</td>
+            <td>憲政主義、有限政府、司法獨立</td>
+          </tr>
+          <tr>
+            <td class="red-cell">2025.12.19</td>
+            <td>5名大法官宣判憲訴法部分條文違憲（114年憲判1號）</td>
+            <td>5名大法官在爭議下宣判，3名大法官拒絕參與；裁判宣告立院修法「立法程序重大瑕疵、違反分權原則」→憲法法庭重新運作</td>
+            <td>司法正當性、分權制衡、正當立法程序</td>
+          </tr>
+        </table>
+      </div>
+
+      <h4>💼 勞動、社會與經濟</h4>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>時間</th><th>事件</th><th>說明</th><th>公民考核心概念</th></tr>
+          <tr>
+            <td class="red-cell">2024.1</td>
+            <td>最低工資法施行</td>
+            <td>法制化調薪機制，連結CPI與勞動生產力；違者最高罰150萬元</td>
+            <td>勞動市場、最低工資（價格下限）、勞資關係</td>
+          </tr>
+          <tr>
+            <td class="blue-cell">2024</td>
+            <td>碳費制度啟動</td>
+            <td>一般費率300元/公噸；大型排放源（年排≥25,000公噸）率先適用</td>
+            <td>負外部性、市場失靈、環境政策、可達性（Pigouvian Tax）</td>
+          </tr>
+          <tr>
+            <td class="blue-cell">2024–2025</td>
+            <td>居住正義議題持續延燒</td>
+            <td>房價指數創新高、租屋黑市、囤房稅2.0（2024年7月施行，房屋稅率提高）</td>
+            <td>社會不平等、政府財政介入、社會安全制度</td>
+          </tr>
+          <tr>
+            <td class="red-cell">2026.1</td>
+            <td>最低工資調漲至29,500元</td>
+            <td>連續第10年調漲；時薪196元；約247萬勞工受惠</td>
+            <td>基本工資、勞動保護、價格下限效果</td>
+          </tr>
+          <tr>
+            <td class="blue-cell">2025</td>
+            <td>長照3.0規劃中</td>
+            <td>長照2.0已難應對快速老化的人口，新版本強化居家服務、家庭照顧者支持</td>
+            <td>社會安全制度、人口結構、社會服務</td>
+          </tr>
+        </table>
+      </div>
+
+      <h4>🌐 科技、文化與社會</h4>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>時間</th><th>事件</th><th>說明</th><th>公民考核心概念</th></tr>
+          <tr>
+            <td class="blue-cell">2024</td>
+            <td>AI換臉詐騙、Deepfake騷擾事件頻傳</td>
+            <td>利用AI合成名人影像詐騙投資；或以AI合成受害者影像進行性騷擾</td>
+            <td>性影像保護法、隱私權、科技與法律滯後性</td>
+          </tr>
+          <tr>
+            <td class="blue-cell">2024</td>
+            <td>選舉認知作戰（假訊息）</td>
+            <td>AI生成假影音廣告干擾選情；中國對台認知作戰；媒體識讀能力受重視</td>
+            <td>媒體效果（議題設定、框架效果）、民主正當性</td>
+          </tr>
+          <tr>
+            <td class="blue-cell">2025</td>
+            <td>平埔原住民族身份取得</td>
+            <td>西拉雅等9個平埔族群可申請原住民身分</td>
+            <td>多元文化主義、身份認同、憲法平等權</td>
+          </tr>
+          <tr>
+            <td class="blue-cell">2025</td>
+            <td>青年基本法通過</td>
+            <td>保障青年教育、就業、居住、參政等基本權益</td>
+            <td>社會權、世代正義、公民參與</td>
+          </tr>
+          <tr>
+            <td class="blue-cell">2025</td>
+            <td>博愛座改稱「優先席」</td>
+            <td>擴大可乘坐對象，解決隱性需求者爭議</td>
+            <td>社會規範、法律修正、弱勢保護</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- INTERNATIONAL -->
+  <div class="lesson-block">
+    <div class="lesson-header open" onclick="toggleLesson(this)">
+      <div class="lesson-num">🌍</div><h3>國際大事（2024–2026）</h3><span class="caret">▼</span>
+    </div>
+    <div class="lesson-body open">
+
+      <h4>🔴 地緣政治衝突</h4>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>時間</th><th>事件</th><th>說明</th><th>公民考核心概念</th></tr>
+          <tr>
+            <td class="red-cell">2022–2025持續</td>
+            <td>俄烏戰爭持續</td>
+            <td>俄羅斯持續攻擊烏克蘭城市；2025年俄軍收復庫爾斯克地區；2025年6月烏克蘭「蜘蛛網行動」深入俄境轟炸5個空軍基地。美國川普政府對援烏態度轉趨消極，要求歐洲分擔更多</td>
+            <td>國際秩序、主權、聯合國功能局限、現實主義 vs 自由主義、NATO擴張</td>
+          </tr>
+          <tr>
+            <td class="red-cell">2023–2025持續</td>
+            <td>以巴戰爭（加薩衝突）</td>
+            <td>哈馬斯2023年10月突擊以色列後，以軍反攻加薩，造成大量平民傷亡，引發國際人道危機；ICJ就以色列訴訟案審理中</td>
+            <td>國際人道法、種族問題、聯合國人權機制局限、難民問題</td>
+          </tr>
+          <tr>
+            <td class="red-cell">2024.11</td>
+            <td>美國大選：川普勝出，回鍋白宮</td>
+            <td>川普擊敗賀錦麗，成為美國史上首位「非連任但曾任總統後再次當選」者；重返孤立主義、對台政策「你付費我保護」爭議</td>
+            <td>民主制度、選舉制度、美台關係、國際秩序轉變</td>
+          </tr>
+          <tr>
+            <td class="blue-cell">2024.12</td>
+            <td>韓國總統尹錫悅宣布戒嚴（旋即撤銷）</td>
+            <td>尹錫悅突然宣布戒嚴，國會6小時內投票反對撤銷，隨後遭彈劾下台</td>
+            <td>民主正當性、緊急權力、分權制衡、民意與國會制衡</td>
+          </tr>
+          <tr>
+            <td class="blue-cell">2024.12</td>
+            <td>敘利亞阿薩德政權垮台</td>
+            <td>叛軍勢力在短期內攻入大馬士革，巴沙爾·阿薩德流亡俄羅斯，長達53年的家族統治結束</td>
+            <td>威權統治、政權合法性、人權問題、難民潮</td>
+          </tr>
+          <tr>
+            <td class="blue-cell">2024</td>
+            <td>瑞典加入NATO</td>
+            <td>俄烏戰爭促使長年保持中立的瑞典加入北約，打破傳統中立政策</td>
+            <td>集體安全、國際組織、主權與結盟、國家認同</td>
+          </tr>
+        </table>
+      </div>
+
+      <h4>🌐 全球治理與政治變遷</h4>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>時間</th><th>事件</th><th>說明</th><th>公民考核心概念</th></tr>
+          <tr>
+            <td class="red-cell">2025.1</td>
+            <td>川普上任後推行大規模關稅政策</td>
+            <td>對多國進口商品課徵高額關稅（10~145%），引發全球貿易戰，衝擊全球供應鏈；各國報復性關稅</td>
+            <td>保護主義、比較利益、貿易政策、WTO功能</td>
+          </tr>
+          <tr>
+            <td class="blue-cell">2024</td>
+            <td>COP29氣候峰會（亞塞拜然）</td>
+            <td>已開發國家承諾每年提供3,000億美元氣候資金給開發中國家，但批評者認為遠不足夠</td>
+            <td>全球治理、環境外部性、南北問題、永續發展</td>
+          </tr>
+          <tr>
+            <td class="blue-cell">2024</td>
+            <td>歐盟AI法案（EU AI Act）通過</td>
+            <td>全球首部AI綜合性法律，依AI應用風險分級規管；高風險AI（如：生物辨識、選舉廣告）須嚴格審查</td>
+            <td>科技治理、跨國法律規範、人工智慧倫理</td>
+          </tr>
+          <tr>
+            <td class="blue-cell">2025.5</td>
+            <td>教宗選舉：Leo XIV成為新任教宗</td>
+            <td>方濟各教宗逝世後，樞機主教選出新教宗，Leo XIV呼籲和平與對話</td>
+            <td>宗教與政治關係、國際社會軟實力</td></tr>
+          <tr>
+            <td class="blue-cell">2024</td>
+            <td>RCEP全面實施</td>
+            <td>全球最大貿易協定（東協+中日韓澳紐）全面落地；台灣未加入</td>
+            <td>區域整合、比較利益、台灣的國際處境</td>
+          </tr>
+          <tr>
+            <td class="red-cell">2025</td>
+            <td>台美貿易框架協議（TIFA）重啟談判</td>
+            <td>在川普關稅衝擊下，台美積極洽談雙邊貿易協定</td>
+            <td>國際貿易、台灣的國際外交空間</td>
+          </tr>
+        </table>
+      </div>
+
+      <h4>🤖 科技與社會</h4>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>時間</th><th>事件</th><th>說明</th><th>公民考核心概念</th></tr>
+          <tr>
+            <td class="red-cell">2024–2025</td>
+            <td>生成式AI爆炸性發展（ChatGPT/Claude/Gemini）</td>
+            <td>AI滲透教育、職場、創作、選舉；各國面臨如何規範挑戰；台灣AI基本法研議中</td>
+            <td>科技與社會變遷、倫理、就業市場、資訊不對稱</td>
+          </tr>
+          <tr>
+            <td class="blue-cell">2024</td>
+            <td>全球「超級選舉年」</td>
+            <td>全球超過60個國家舉行重大選舉（包括美國、台灣、印度、英國、歐洲議會），AI假訊息干預選情成為全球關注焦點</td>
+            <td>民主制度、選舉正當性、媒體識讀</td>
+          </tr>
+          <tr>
+            <td class="blue-cell">2024</td>
+            <td>諾貝爾獎首度頒給AI領域（物理獎給辛頓）</td>
+            <td>AI之父傑弗里·辛頓（Geoffrey Hinton）獲諾貝爾物理學獎，開啟科學界對AI跨領域影響的討論</td>
+            <td>知識進步、科技倫理、社會影響</td>
+          </tr>
+        </table>
+      </div>
+
+      <h4>📊 2024–2026 關鍵數字速記</h4>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>項目</th><th>2024年</th><th>2025年</th><th>2026年</th></tr>
+          <tr><td class="blue-cell">台灣最低月薪</td><td>27,470元</td><td>28,590元</td><td class="red-cell">29,500元</td></tr>
+          <tr><td class="blue-cell">台灣時薪</td><td>183元</td><td>190元</td><td class="red-cell">196元</td></tr>
+          <tr><td class="blue-cell">台灣成年年齡</td><td colspan="3" class="red-cell">18歲（2023年1月1日起）</td></tr>
+          <tr><td class="blue-cell">台灣大法官人數</td><td>15→8（任期屆滿）</td><td>8（提名遭封殺）</td><td>8（持續懸缺）</td></tr>
+          <tr><td class="blue-cell">台灣碳費費率</td><td colspan="3">一般費率300元/公噸CO₂e</td></tr>
+          <tr><td class="blue-cell">全球最熱年份</td><td class="red-cell">2024（有紀錄以來最熱年）</td><td>—</td><td>—</td></tr>
+          <tr><td class="blue-cell">俄烏戰爭</td><td>第2年持續</td><td>第3年持續（無停火）</td><td>第4年持續</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ COMPARE CHARTS ============================================================ -->
+<div class="page" id="page-compare-poli">
+  <div class="book-title" style="background: var(--blue);">
+    <h2>📐 憲法完整架構 ── 政府體制深度解析</h2>
+    <p>對應圖片1：憲法三大支柱 → 國家組織 → 五院 → 中央地方關係</p>
+  </div>
+
+  <!-- BLOCK 1: 憲法三大支柱 -->
+  <div class="lesson-block">
+    <div class="lesson-header open" onclick="toggleLesson(this)">
+      <div class="lesson-num">1</div><h3>憲法的三大內容支柱</h3><span class="caret">▼</span>
+    </div>
+    <div class="lesson-body open">
+      <div class="mindmap">
+        <div class="mindmap-center">中華民國憲法（1947年施行）</div>
+        <div class="mindmap-row">
+          <div class="mindmap-node red">人民基本權利義務<br><span class="mindmap-leaf">§7–§24 權利</span><span class="mindmap-leaf">§19–§23 義務</span><span class="mindmap-leaf">§23 限制條件</span></div>
+          <div class="mindmap-node">國家基本組織<br><span class="mindmap-leaf">總統（§35–§52）</span><span class="mindmap-leaf">五院（§53–§106）</span><span class="mindmap-leaf">中央地方關係（§107–§128）</span></div>
+          <div class="mindmap-node green">國家基本政策<br><span class="mindmap-leaf">§136–§169 國防/外交/國民經濟/社會安全/教育/邊疆</span></div>
+        </div>
+      </div>
+
+      <h4>📌 人民的基本權利（§7–§18）── 逐條詳解</h4>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>條文</th><th>權利名稱</th><th>內容</th><th>限制/特別說明</th><th>記憶例子</th></tr>
+          <tr><td class="red-cell">§7</td><td>平等權</td><td>不因種族、階級、黨派、宗教、性別受差別待遇</td><td>合理差別對待仍可（如：軍人、殘障加分）；形式平等 vs 實質平等</td><td>女性入伍，軍隊為女性設立不同體能標準→合理差異</td></tr>
+          <tr><td class="blue-cell">§8</td><td>人身自由</td><td>逮捕、拘禁須依法定程序；24小時內移送法院</td><td>最重要的自由！連帶保障沉默權；羈押須法官裁定</td><td>被捕後警察不得無限期留置，最多24小時移送</td></tr>
+          <tr><td class="blue-cell">§9</td><td>不受軍事審判</td><td>人民（現役軍人除外）不受軍事法院審判</td><td>例外：戒嚴（§39）時期</td><td>平民不能被軍法審判</td></tr>
+          <tr><td class="blue-cell">§10</td><td>居住遷徙自由</td><td>選擇住所、出入國境的自由</td><td>防疫期間出境限制須有法律依據</td><td>任何人有護照就能出國</td></tr>
+          <tr><td class="red-cell">§11</td><td>言論、講學、著作、出版自由</td><td>表達思想意見的自由</td><td>誹謗（刑§310）、煽動（刑§153）仍不受保護</td><td>批評政府合法；散布假訊息誹謗他人違法</td></tr>
+          <tr><td class="blue-cell">§12</td><td>秘密通訊自由</td><td>私人通信不受國家監看</td><td>監聽須法院許可（通保法）</td><td>警察不能隨意看你的 LINE 訊息</td></tr>
+          <tr><td class="blue-cell">§13</td><td>宗教信仰自由</td><td>選擇、改變信仰的自由</td><td>宗教行為違法仍受刑法規範</td><td>可信仰任何宗教，但以宗教名義殺人仍犯罪</td></tr>
+          <tr><td class="blue-cell">§14</td><td>集會結社自由</td><td>集會遊行、組成社團的自由</td><td>集會遊行法規範程序；政黨不得主張分裂國土（釋644號）</td><td>示威遊行合法，但須依法申請路線</td></tr>
+          <tr><td class="red-cell">§15</td><td>生存、工作、財產權</td><td>生命不被任意剝奪；工作不被歧視；財產受保障</td><td>財產可徵收但須補償（§107）；正當法律程序</td><td>政府徵地建高鐵須給予市價補償</td></tr>
+          <tr><td class="blue-cell">§16</td><td>請願、訴願、訴訟權</td><td>向政府陳情、行政救濟、司法救濟的權利</td><td>程序性權利，保障實體權利能被救濟</td><td>行政罰款可提訴願再提行政訴訟</td></tr>
+          <tr><td class="blue-cell">§17</td><td>參政權</td><td>選舉、罷免、創制、複決四項民主權利</td><td>年齡限制（投票20歲）；被選舉年齡依職位不同</td><td>—</td></tr>
+          <tr><td class="blue-cell">§18</td><td>應考試服公職</td><td>公平參加考試、擔任公職的機會</td><td>考試院主管公務員考試</td><td>—</td></tr>
+        </table>
+      </div>
+
+      <h4>📌 基本義務（§19–§23）</h4>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>條文</th><th>義務</th><th>說明</th><th>特別說明</th></tr>
+          <tr><td class="red-cell">§19</td><td>納稅義務</td><td>依法律納稅</td><td>租稅法定主義：無法律授權不得課稅；憲§19為法律保留原則之根據</td></tr>
+          <tr><td class="blue-cell">§20</td><td>服兵役義務</td><td>依法律服兵役</td><td>役男兵役；2024年義務役恢復一年制（原四個月）</td></tr>
+          <tr><td class="blue-cell">§21</td><td>受國民教育</td><td>6~15歲受義務教育</td><td>既是義務也是權利（不能剝奪就學機會）</td></tr>
+        </table>
+      </div>
+
+      <h4>📌 基本權利的限制條件（§23）── 最重要考點</h4>
+      <div class="box box-red">
+        <div class="box-title">🔴 §23 基本權利限制四要件（缺一不可）</div>
+        必須同時符合以下四項，才能以法律限制基本權利：<br>
+        ①<span class="red">防止妨礙他人自由</span>（如：酒駕傷人→限制飲酒駕車自由）<br>
+        ②<span class="red">避免緊急危難</span>（如：颱風疫情→限制出行自由）<br>
+        ③<span class="red">維持社會秩序</span>（如：集會遊行→保障公共安全）<br>
+        ④<span class="red">增進公共利益</span>（如：都市計畫→土地使用限制）<br>
+        <br>
+        ⚠️ <span class="blue">以上任何一項理由＋必須以「法律」為之（法律保留）＋符合比例原則</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- BLOCK 2: 五院詳解 -->
+  <div class="lesson-block">
+    <div class="lesson-header open" onclick="toggleLesson(this)">
+      <div class="lesson-num">2</div><h3>五院職權完整比較</h3><span class="caret">▼</span>
+    </div>
+    <div class="lesson-body open">
+      <div class="tbl-wrap">
+        <table>
+          <tr><th class="compare-hdr">院別</th><th class="compare-hdr">職權</th><th class="compare-hdr">組成</th><th class="compare-hdr">任期</th><th class="compare-hdr">重要規定</th></tr>
+          <tr>
+            <td class="red-cell">行政院<br>§53–§61</td>
+            <td>最高行政機關；執行法律、制定政策；提出預算、法律草案</td>
+            <td>院長（由總統任命，無須立院同意）、副院長、各部會首長</td>
+            <td>無固定任期（隨總統施政）</td>
+            <td>院長對立院負責；得提覆議（§57）；不信任投票通過→院長辭職或總統解散立院</td>
+          </tr>
+          <tr>
+            <td class="blue-cell">立法院<br>§62–§76</td>
+            <td>立法、修法、預算審議、條約批准、質詢、不信任投票、彈劾總統提案、修憲提案</td>
+            <td>113席：區域73席（FPTP）、不分區34席（政黨比例）、原住民6席</td>
+            <td>4年（可連任）</td>
+            <td>議長由立委互選；一般決議過半；修憲提案須3/4出席3/4決議；正副院長由立委互選</td>
+          </tr>
+          <tr>
+            <td class="blue-cell">司法院<br>§77–§82</td>
+            <td>違憲審查（憲法法庭）、民刑行政訴訟、公務員懲戒、統一解釋法律</td>
+            <td>院長、副院長、大法官15人（含院長副院長）；由總統提名、立院同意任命</td>
+            <td>8年（不得連任）；任期交錯制</td>
+            <td>憲法法庭宣告違憲：須大法官現有總額過半同意；死刑等重大案件須2/3同意</td>
+          </tr>
+          <tr>
+            <td class="blue-cell">考試院<br>§83–§89</td>
+            <td>公務員考試、任用、銓敘、保障、退休、撫卹、公務人力培訓</td>
+            <td>院長、副院長、考試委員21人；總統提名、立院同意</td>
+            <td>6年（可連任）</td>
+            <td>保障公務員用人唯才；國家考試統一辦理</td>
+          </tr>
+          <tr>
+            <td class="blue-cell">監察院<br>§90–§106</td>
+            <td>彈劾（政務官、法官）、糾舉（失職公務員）、糾正（行政機關）、審計（政府財務）</td>
+            <td>院長、副院長、監察委員29人；總統提名、立院同意</td>
+            <td>6年（可連任）</td>
+            <td>提彈劾案須1/2委員提議、1/2決議；審計長由監察院長提請總統任命</td>
+          </tr>
+        </table>
+      </div>
+
+      <h4>📌 總統的職權（§35–§52）</h4>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>類別</th><th>職權</th><th>條文</th><th>說明</th></tr>
+          <tr><td class="red-cell">行政</td><td>任命行政院長（無須立院同意）</td><td>增修§3</td><td>2000年修憲廢除閣揆同意權</td></tr>
+          <tr><td class="red-cell">行政</td><td>發布緊急命令</td><td>§43</td><td>須經行政院院會決議，1個月內提立院追認</td></tr>
+          <tr><td class="blue-cell">立法</td><td>提交覆議（被動）</td><td>§57</td><td>行政院對立院決議提請覆議；立院須2/3維持原決議才生效</td></tr>
+          <tr><td class="blue-cell">立法</td><td>解散立法院（增修§2）</td><td>增修§2</td><td>須在立院通過不信任投票後10日內決定；解散後60日內辦選舉</td></tr>
+          <tr><td class="blue-cell">外交</td><td>統帥權、宣戰媾和、締結條約</td><td>§36、§38</td><td>宣戰須立院決議</td></tr>
+          <tr><td class="blue-cell">司法</td><td>大赦、特赦、減刑、復權</td><td>§40</td><td>大赦須立院同意；特赦由總統直接發布</td></tr>
+          <tr><td class="red-cell">任命</td><td>提名各院院長、大法官等重要職位</td><td>各條</td><td>司法院、考試院、監察院院長及委員均由總統提名，立院同意後任命</td></tr>
+        </table>
+      </div>
+
+      <h4>📌 中央與地方關係</h4>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>事項</th><th>中央事權（§107）</th><th>省縣事權（§108）</th><th>說明</th></tr>
+          <tr><td class="red-cell">中央專屬</td><td>外交、國防、幣制、航空、郵政、通訊、鐵路、航業（海）、礦業</td><td>—</td><td>涉及全國統一性質，必須中央統一管理</td></tr>
+          <tr><td class="blue-cell">中央立法地方執行</td><td>—</td><td>省縣得自行辦理，中央得制定標準</td><td>如教育、社會福利、土地政策</td></tr>
+          <tr><td class="blue-cell">地方自治</td><td>—</td><td>地方制度法規定縣市自治事項</td><td>縣市可自行訂定自治條例（須不牴觸中央法規）</td></tr>
+        </table>
+      </div>
+      <div class="exam-alert">台灣目前「凍省」：省的功能已虛級化（1998年起），實際上中央直接管轄縣市與6直轄市（台北、新北、桃園、台中、台南、高雄）</div>
+    </div>
+  </div>
+
+  <!-- BLOCK 3: 政府體制比較 -->
+  <div class="lesson-block">
+    <div class="lesson-header" onclick="toggleLesson(this)">
+      <div class="lesson-num">3</div><h3>三大政府體制完整比較</h3><span class="caret">▼</span>
+    </div>
+    <div class="lesson-body">
+      <div class="tbl-wrap">
+        <table>
+          <tr><th class="compare-hdr">項目</th><th class="compare-hdr">內閣制</th><th class="compare-hdr">總統制</th><th class="compare-hdr">半總統制（雙首長制）</th></tr>
+          <tr><td>代表國家</td><td>英國、日本、德國、澳洲、加拿大</td><td>美國、巴西、墨西哥、南韓（改良版）</td><td>法國、台灣、俄羅斯</td></tr>
+          <tr><td>行政首長產生</td><td>國會多數黨領袖任總理（閣揆）</td><td>全民直選總統，固定任期</td><td>總統直選；總理由總統任命</td></tr>
+          <tr><td>行政向誰負責</td><td class="red-cell">向國會（議會）負責</td><td class="blue-cell">向人民負責（固定任期不能倒閣）</td><td>總統向人民；行政院長向立法院負責</td></tr>
+          <tr><td>不信任投票（倒閣）</td><td class="red-cell">✅ 國會不信任投票→總理辭職</td><td>❌ 無（除非彈劾）</td><td>✅ 立法院對行政院長不信任投票</td></tr>
+          <tr><td>解散國會</td><td>✅ 總理建議解散，再辦選舉</td><td>❌ 不得解散國會</td><td>✅ 總統可解散立法院（但有前提）</td></tr>
+          <tr><td>行政立法關係</td><td>高度融合（閣員多為議員）</td><td class="red-cell">嚴格分立（行政官員不得兼任議員）</td><td>混合（院長可兼議員，但實務上不常見）</td></tr>
+          <tr><td>彈劾機制</td><td>不信任投票（政治責任）</td><td>國會彈劾總統（高門檻）</td><td>立院提彈劾案交憲法法庭</td></tr>
+          <tr><td class="red-cell">台灣具體規定</td><td>—</td><td>—</td><td>立院通過不信任案→行政院長辭職或總統宣告解散立院→60日內重新選舉</td></tr>
+        </table>
+      </div>
+      <div class="box box-blue">
+        <div class="box-title">為什麼台灣是半總統制？</div>
+        ①總統由人民直選（1996年起）→類似總統制<br>
+        ②行政院長由總統任命，但須對立法院負責（可被倒閣）→類似內閣制<br>
+        ③總統有解散立法院的權力（倒閣後）→類似法國第五共和<br>
+        ④當總統所屬政黨未過半時，產生「左右共治」的可能（如：法國1986–88年）
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="page" id="page-compare-law">
+  <div class="book-title" style="background: var(--red);">
+    <h2>⚖️ 法律體系完全解析</h2>
+    <p>行政法架構（圖4）・物權體系（圖7）・親等繼承（圖2/9）・時效完整比較表（圖5）・抵押流程（圖8）</p>
+  </div>
+
+  <!-- ADMIN LAW -->
+  <div class="lesson-block">
+    <div class="lesson-header open" onclick="toggleLesson(this)">
+      <div class="lesson-num">A</div><h3>行政法體系完整架構（對應圖片4）</h3><span class="caret">▼</span>
+    </div>
+    <div class="lesson-body open">
+      <div class="box box-blue">
+        <div class="box-title">行政法定義</div>
+        行政法乃關於國家行政權之組織、作用及其救濟之國內公法。<br>
+        核心關係：<span class="red">行政組織（國家）</span> →「作用」→ 人民；人民→「救濟」→ 行政組織
+      </div>
+
+      <div class="mindmap">
+        <div class="mindmap-center">行政法體系</div>
+        <div class="mindmap-row">
+          <div class="mindmap-node">基礎理論<br><span class="mindmap-leaf">法律保留原則</span><span class="mindmap-leaf">法律優位原則</span><span class="mindmap-leaf">比例原則</span><span class="mindmap-leaf">信賴保護</span></div>
+          <div class="mindmap-node red">組織法<br><span class="mindmap-leaf">行政組織</span><span class="mindmap-leaf">行政資源法制</span><span class="mindmap-leaf">行政程序總則</span></div>
+          <div class="mindmap-node">作用法<br><span class="mindmap-leaf">行政命令</span><span class="mindmap-leaf">行政處分</span><span class="mindmap-leaf">行政契約</span><span class="mindmap-leaf">行政執行</span><span class="mindmap-leaf">行政罰</span><span class="mindmap-leaf">事實行為</span></div>
+          <div class="mindmap-node green">救濟法<br><span class="mindmap-leaf">訴願法</span><span class="mindmap-leaf">行政訴訟</span><span class="mindmap-leaf">國家賠償</span><span class="mindmap-leaf">損失補償</span></div>
+        </div>
+      </div>
+
+      <h4>行政作用類型詳解</h4>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>作用類型</th><th>定義</th><th>例子</th><th>特色</th></tr>
+          <tr><td class="red-cell">行政命令</td><td>行政機關訂定的抽象規範（非個案）</td><td>環保署訂定「空氣汙染防制法施行細則」</td><td>法規命令需有法律授權；行政規則為內部管理</td></tr>
+          <tr><td class="red-cell">行政處分</td><td>行政機關就具體事件所為單方公法上決定</td><td>核發/撤銷執照、開罰單、拆除建物命令</td><td>最常見的行政作用；可提訴願、行政訴訟救濟</td></tr>
+          <tr><td class="blue-cell">行政契約</td><td>行政機關與人民以合意締結公法契約</td><td>政府向廠商採購物品（但一般採購多屬私法）、委託私人辦理公共業務</td><td>雙方合意；爭議由行政法院管轄</td></tr>
+          <tr><td class="blue-cell">行政執行</td><td>強制實現行政法上義務</td><td>強制拆除違建、強制隔離</td><td>直接強制 vs 間接強制（怠金）</td></tr>
+          <tr><td class="blue-cell">行政罰</td><td>對違反行政法義務者制裁</td><td>闖紅燈罰款、停業處分</td><td>行政罰法（§1起）；與刑罰不同（一事不二罰原則）</td></tr>
+          <tr><td class="blue-cell">事實行為</td><td>不直接產生法律效果的行政行動</td><td>政府舉辦宣導活動、修繕道路</td><td>無法直接提行政爭訟，但侵害人民可能請求國賠</td></tr>
+        </table>
+      </div>
+
+      <h4>行政救濟程序（完整版）</h4>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>階段</th><th>機關</th><th>法律依據</th><th>期限</th><th>效果</th></tr>
+          <tr><td class="red-cell">訴願</td><td>上級行政機關（原處分機關的上級）</td><td>訴願法</td><td>知悉處分後<span class="red">30日內</span></td><td>撤銷、變更或確認；行政訴訟的先行程序（部分）</td></tr>
+          <tr><td class="blue-cell">行政訴訟</td><td>行政法院（地方行政法院、高等行政法院、最高行政法院）</td><td>行政訴訟法</td><td>訴願決定書送達後<span class="red">2個月</span></td><td>撤銷訴訟、確認訴訟、課予義務訴訟、一般給付訴訟</td></tr>
+          <tr><td class="blue-cell">國家賠償</td><td>普通法院（民事庭）；先向賠償義務機關協議</td><td>國家賠償法</td><td>知悉後<span class="red">2年</span>，自行為起算<span class="red">5年</span></td><td>金錢賠償；公務員故意過失或公共設施瑕疵</td></tr>
+          <tr><td class="blue-cell">損失補償</td><td>各特別法規定機關</td><td>土地徵收條例等</td><td>各法不同</td><td>合法行為造成特別犧牲→補償差額</td></tr>
+        </table>
+      </div>
+      <div class="box box-red">
+        <div class="box-title">🔴 國家賠償 vs 損失補償 ── 超重要考點</div>
+        <span class="red">國家賠償</span>：行政機關「違法」行使公權力→賠償（公務員須有故意/過失，或公共設施設置管理有欠缺）<br>
+        <span class="blue">損失補償</span>：行政機關「合法」行使公權力，但造成人民特別犧牲→補償（如徵收私地建高速公路）<br>
+        例子：警察誤抓無辜者（違法）→國家賠償；政府徵地（合法）→損失補償
+      </div>
+    </div>
+  </div>
+
+  <!-- PROPERTY LAW -->
+  <div class="lesson-block">
+    <div class="lesson-header open" onclick="toggleLesson(this)">
+      <div class="lesson-num">B</div><h3>物權體系完整圖解（對應圖片7）</h3><span class="caret">▼</span>
+    </div>
+    <div class="lesson-body open">
+      <div class="mindmap">
+        <div class="mindmap-center">物 權（民法第二編）</div>
+        <div class="mindmap-row">
+          <div class="mindmap-node red">完全物權<br><span class="mindmap-leaf">所有權（§765）</span></div>
+          <div class="mindmap-node">限制物權（在他人之物上）<br>
+            <span class="mindmap-leaf">用益物權：</span><span class="mindmap-leaf">地上權</span><span class="mindmap-leaf">農育權</span><span class="mindmap-leaf">不動產役權</span><span class="mindmap-leaf">典權</span>
+          </div>
+          <div class="mindmap-node green">擔保物權：<br><span class="mindmap-leaf">抵押權</span><span class="mindmap-leaf">質權</span><span class="mindmap-leaf">留置權</span></div>
+        </div>
+      </div>
+
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>物權種類</th><th>法條</th><th>定義</th><th>重要特性</th><th>生活例子</th></tr>
+          <tr><td class="red-cell">所有權</td><td>§765</td><td>對物最完整的支配權利（占有、使用、收益、處分）</td><td>完全物權；物權法定主義（§757：只有法律規定的物權種類才有效）</td><td>買房後你對這間房有完全所有權</td></tr>
+          <tr><td class="blue-cell">地上權<br>（普通/區分）</td><td>§832</td><td>在他人土地上建造並保有建物的權利</td><td>需登記；區分地上權（如：地上建物、地下設施分屬不同權利人）</td><td>台鐵高架化──政府在土地所有人土地上空建高架橋，使用區分地上權</td></tr>
+          <tr><td class="blue-cell">農育權</td><td>§850之1</td><td>在他人土地上從事農、林、牧、漁、鹽業或保育</td><td>2010年新增，取代舊「永佃權」</td><td>承租他人農地耕種，設定農育權</td></tr>
+          <tr><td class="blue-cell">不動產役權</td><td>§851</td><td>需役地（自己土地）因地理關係，在供役地（他人土地）上通行等特定利益</td><td>從屬性：隨需役地轉移</td><td>A地被B地包圍，需穿越B地才能出入→設定通行役權</td></tr>
+          <tr><td class="blue-cell">典權</td><td>§911</td><td>支付典價，占有使用他人不動產的權利；到期可回贖</td><td>台灣傳統制度，現實中少見；最長30年</td><td>甲缺錢，把房子「典」給乙，乙付典價後可住房，甲可在期限內贖回</td></tr>
+          <tr><td class="red-cell">抵押權<br>（普通/最高限額）</td><td>§860</td><td>債務人以不動產提供擔保，不移轉占有；債務不履行可拍賣</td><td>登記生效；物上代位性；從屬性；最高限額抵押（§881之1）：一定期間內多筆債務的擔保</td><td>向銀行貸款買房→銀行設定抵押權；若斷供→法院拍賣房屋</td></tr>
+          <tr><td class="blue-cell">質權</td><td>§884</td><td>債務人或第三人以動產或有價證券提供擔保，移轉占有</td><td>占有移交（不同於抵押）；不得自行取償（§889）</td><td>典當：把項鍊拿去當鋪→典當業者取得質權</td></tr>
+          <tr><td class="blue-cell">留置權</td><td>§928</td><td>債權人占有債務人動產，在債務清償前可留置</td><td>法定物權（自動發生，無須約定）；占有保管</td><td>修車廠修好車後，車主不付錢→修車廠可留置車輛</td></tr>
+        </table>
+      </div>
+
+      <h4>抵押權完整流程（對應圖片8）</h4>
+      <div class="flow">
+        <div class="flow-step">抵押人（債務人/第三人）提供不動產</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step gold">抵押權人（銀行/債權人）取得抵押權（須辦理登記）</div>
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>情況</th><th>處理</th><th>法條</th></tr>
+          <tr><td class="blue-cell">債務按時清償</td><td>抵押權消滅→塗銷登記</td><td>§307</td></tr>
+          <tr><td class="red-cell">債務不履行</td><td>抵押權人向法院聲請拍賣抵押物→拍賣所得優先受償</td><td>§873</td></tr>
+          <tr><td class="blue-cell">抵押物滅失</td><td>對保險金行使物上代位（抵押物的代替物）</td><td>§881</td></tr>
+          <tr><td class="blue-cell">最高限額抵押</td><td>確定期日後結算，確定額度再以普通抵押執行</td><td>§881之1</td></tr>
+        </table>
+      </div>
+      <div class="box box-blue">
+        <div class="box-title">物權法定主義（§757）── 必考！</div>
+        物權的種類和內容，必須依照法律規定，不能由當事人任意創設（vs 契約自由原則）。<br>
+        例外：「習慣」上已有的物權，在不違反公序良俗的情況下，亦承認其效力。
+      </div>
+    </div>
+  </div>
+
+  <!-- KINSHIP -->
+  <div class="lesson-block">
+    <div class="lesson-header open" onclick="toggleLesson(this)">
+      <div class="lesson-num">C</div><h3>親等計算 · 繼承順序 · 代位繼承（對應圖片2/9）</h3><span class="caret">▼</span>
+    </div>
+    <div class="lesson-body open">
+      <h4>親等計算規則</h4>
+      <div class="box box-blue">
+        <div class="box-title">親等計算口訣</div>
+        直系血親：從自己往上或往下數幾代＝幾親等<br>
+        旁系血親：先找共同祖先，從共同祖先分別數到兩人，再加總<br>
+        姻親：在血親的基礎上加算
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>關係</th><th>類型</th><th>親等</th><th>繼承順位</th></tr>
+          <tr><td class="red-cell">父母（含養父母）</td><td>直系血親尊親屬</td><td>1親等</td><td>第二順位</td></tr>
+          <tr><td class="red-cell">子女（含養子女）</td><td>直系血親卑親屬</td><td>1親等</td><td>第一順位</td></tr>
+          <tr><td class="blue-cell">配偶</td><td>姻親（無親等）</td><td>無親等</td><td>恆為繼承人</td></tr>
+          <tr><td class="blue-cell">祖父母/外祖父母</td><td>直系血親尊親屬</td><td>2親等</td><td>第四順位</td></tr>
+          <tr><td class="blue-cell">孫子女</td><td>直系血親卑親屬</td><td>2親等</td><td>第一順位（代位繼承）</td></tr>
+          <tr><td class="blue-cell">兄弟姊妹</td><td>旁系血親</td><td>2親等</td><td>第三順位</td></tr>
+          <tr><td>伯叔姑姨舅</td><td>旁系血親</td><td>3親等</td><td>不在法定繼承順序</td></tr>
+          <tr><td>堂表兄弟姊妹</td><td>旁系血親</td><td>4親等</td><td>不在法定繼承順序</td></tr>
+          <tr><td>岳父母/公婆</td><td>姻親（直系）</td><td>1親等姻親</td><td>不繼承</td></tr>
+        </table>
+      </div>
+
+      <h4>繼承順序與應繼分（§1138–§1144）</h4>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>繼承人組合</th><th>各繼承人應繼分</th><th>例子</th></tr>
+          <tr><td class="red-cell">配偶 + 第一順位（子女）</td><td class="red-cell">各二分之一（均分）</td><td>遺產1000萬：配偶500萬，一個孩子500萬；兩個孩子各250萬</td></tr>
+          <tr><td class="blue-cell">配偶 + 第二順位（父母）</td><td class="blue-cell">配偶二分之一；父母各四分之一</td><td>遺產1000萬：配偶500萬，父母各250萬</td></tr>
+          <tr><td class="blue-cell">配偶 + 第三順位（兄弟姊妹）</td><td class="blue-cell">配偶二分之一；兄弟姊妹均分二分之一</td><td>遺產1000萬：配偶500萬，兄姊各250萬（兩兄弟）</td></tr>
+          <tr><td class="blue-cell">配偶 + 第四順位（祖父母）</td><td class="blue-cell">配偶三分之二；祖父母均分三分之一</td><td>遺產1000萬：配偶667萬，祖父母各167萬</td></tr>
+          <tr><td class="red-cell">無同一順位繼承人（配偶獨繼）</td><td>配偶取得全部</td><td>—</td></tr>
+        </table>
+      </div>
+
+      <h4>代位繼承 vs 本位繼承（對應圖片2）</h4>
+      <div class="box box-red">
+        <div class="box-title">🔴 代位繼承（§1140）── 最常考！</div>
+        情境：<span class="red">父（子之父）先於祖父死亡</span>，本來父可繼承祖父，但父已死→由「子」代替父的位置，繼承祖父的遺產（繼承父應得的份額）<br><br>
+        <span class="blue">本位繼承</span>：正常情況，父仍在世→父繼承祖父；子未參與（子要等父死後才繼承父）<br><br>
+        記憶口訣：「父先走，子代位」→子跳過父，直接代替父繼承上一代（祖父）<br><br>
+        ⚠️ <span class="red">代位繼承只在第一順位（直系血親卑親屬）才有</span>；兄弟姊妹不能代位繼承父母的份額給下一代。
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th></th><th>代位繼承</th><th>本位繼承</th></tr>
+          <tr><td>情境</td><td class="red-cell">繼承人（父）在被繼承人（祖父）死亡前先死</td><td class="blue-cell">繼承人（父）仍在世，正常繼承</td></tr>
+          <tr><td>誰繼承</td><td>孫子代替父，繼承祖父</td><td>父繼承祖父</td></tr>
+          <tr><td>繼承份額</td><td>孫子繼承父本應得的份額</td><td>父取得應繼分</td></tr>
+          <tr><td>法條</td><td>§1140</td><td>§1138</td></tr>
+        </table>
+      </div>
+
+      <h4>特留分（§1223–§1225）── 不可剝奪的最低繼承額</h4>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>繼承人</th><th>特留分比例</th><th>計算方式</th><th>例子</th></tr>
+          <tr><td class="red-cell">直系血親卑親屬（子女）</td><td>應繼分的 <span class="red">1/2</span></td><td>應繼分×1/2</td><td>遺產1000萬，獨子應繼1000萬→特留分500萬（遺囑至少留500萬給子）</td></tr>
+          <tr><td class="red-cell">配偶</td><td>應繼分的 <span class="red">1/2</span></td><td>同上</td><td>遺產1000萬，配偶應繼500萬→特留分250萬</td></tr>
+          <tr><td class="blue-cell">父母</td><td>應繼分的 <span class="blue">1/3</span></td><td>應繼分×1/3</td><td>—</td></tr>
+          <tr><td class="blue-cell">兄弟姊妹</td><td>應繼分的 <span class="blue">1/3</span></td><td>應繼分×1/3</td><td>—</td></tr>
+          <tr><td class="blue-cell">祖父母</td><td>應繼分的 <span class="blue">1/3</span></td><td>應繼分×1/3</td><td>—</td></tr>
+        </table>
+      </div>
+      <div class="exam-alert">被繼承人可以立遺囑把財產送給非繼承人（如：慈善機構），但不得侵害法定繼承人的特留分。若遺贈超過特留分，繼承人可主張「扣減」。</div>
+    </div>
+  </div>
+
+  <!-- TIME LIMITS -->
+  <div class="lesson-block">
+    <div class="lesson-header open" onclick="toggleLesson(this)">
+      <div class="lesson-num">D</div><h3>時效完整比較總表（對應圖片5）</h3><span class="caret">▼</span>
+    </div>
+    <div class="lesson-body open">
+      <div class="box box-red">
+        <div class="box-title">🔴 什麼是時效？</div>
+        時效分兩種：<br>
+        ①<span class="red">消滅時效</span>：超過一定期間不行使<span class="red">請求權</span>→請求權消滅（但法院不主動適用，須對方抗辯）<br>
+        ②<span class="blue">取得時效</span>：持續占有一定期間→取得所有權（讓事實狀態合法化）
+      </div>
+
+      <h4>民法消滅時效</h4>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>類型</th><th>期間</th><th>例子</th></tr>
+          <tr><td class="red-cell">一般請求權（§125）</td><td class="red-cell">15年</td><td>一般借款契約的返還請求權</td></tr>
+          <tr><td class="blue-cell">特殊消滅時效（總則§126）</td><td class="blue-cell">5年</td><td>利息、租金、贍養費等定期給付；商業往來票款</td></tr>
+          <tr><td class="blue-cell">特殊（§127）</td><td class="blue-cell">2年</td><td>旅館住宿費、飯店餐飲費、律師費、醫師報酬</td></tr>
+          <tr><td class="blue-cell">侵權行為損害賠償（§197）</td><td>知悉起 <span class="red">2年</span>（最長 <span class="red">10年</span>）</td><td>交通事故傷害：知道誰撞後2年內；最長從事故算起10年</td></tr>
+          <tr><td class="blue-cell">消保法（§8）</td><td>知悉起 <span class="red">3年</span>（最長 <span class="red">7年</span>）</td><td>消費者因商品瑕疵受損：知悉後3年內</td></tr>
+          <tr><td class="blue-cell">繼承回復請求（§1146）</td><td>知悉起 <span class="red">2年</span>，最長 <span class="red">10年</span></td><td>—</td></tr>
+        </table>
+      </div>
+
+      <h4>民法取得時效（§769–§772）</h4>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>財產</th><th>善意（無過失）</th><th>惡意（有過失/知道不是自己的）</th><th>說明</th></tr>
+          <tr><td class="blue-cell">動產</td><td class="blue-cell">5年</td><td class="red-cell">10年</td><td>善意占有：以為是自己的；惡意：知道是別人的</td></tr>
+          <tr><td class="blue-cell">不動產（已登記）</td><td colspan="2" class="red-cell">無時效取得（登記制度保護）</td><td>已登記不動產不能靠時效取得所有權，制度保護登記權利人</td></tr>
+          <tr><td class="blue-cell">不動產（未登記）善意</td><td class="blue-cell">10年</td><td class="red-cell">20年</td><td>如：占用他人未登記農地多年→可請求登記取得所有權</td></tr>
+        </table>
+      </div>
+
+      <h4>刑法時效（追訴權時效、行刑權時效）</h4>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>刑度</th><th>追訴權時效（§80）</th><th>行刑權時效（§84）</th></tr>
+          <tr><td class="red-cell">死刑/無期徒刑/10年以上有期徒刑</td><td>30年</td><td>40年</td></tr>
+          <tr><td class="blue-cell">3年以上未滿10年有期徒刑</td><td>20年</td><td>30年</td></tr>
+          <tr><td class="blue-cell">1年以上未滿3年有期徒刑</td><td>10年</td><td>15年</td></tr>
+          <tr><td class="blue-cell">1年未滿有期徒刑、拘役、罰金</td><td>5年</td><td>7年</td></tr>
+          <tr><td class="blue-cell">沒收（獨立）</td><td>—</td><td>10年</td></tr>
+        </table>
+      </div>
+      <div class="box box-red">
+        <div class="box-title">🔴 追訴權時效 vs 行刑權時效</div>
+        <span class="red">追訴權時效</span>：超過期間，檢察官<span class="red">不得再起訴</span>（如：30年前的謀殺案）<br>
+        <span class="blue">行刑權時效</span>：已判決確定，但超過期間<span class="blue">不得再執行刑罰</span>（逃亡超時）
+      </div>
+
+      <h4>行政法時效</h4>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>類型</th><th>機關（對人民）</th><th>人民（對機關）</th><th>說明</th></tr>
+          <tr><td class="blue-cell">公法上請求權（行程法§131）</td><td>5年</td><td>10年</td><td>政府向人民收費：5年；人民向政府請求：10年</td></tr>
+          <tr><td class="blue-cell">行政執行權時效</td><td>原則5年，例外10年</td><td>—</td><td>強制執行行政處分的期間</td></tr>
+          <tr><td class="blue-cell">行政罰裁處權時效（行罰法§27）</td><td>3年</td><td>—</td><td>違規後3年內未開罰，不得再裁罰</td></tr>
+          <tr><td class="blue-cell">社會秩序維護法處理時效</td><td>2個月</td><td>—</td><td>違序行為2個月內未處理，時效消滅</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- LEGAL HIERARCHY -->
+  <div class="lesson-block">
+    <div class="lesson-header open" onclick="toggleLesson(this)">
+      <div class="lesson-num">E</div><h3>法律層級體系 + 公法私法全覽</h3><span class="caret">▼</span>
+    </div>
+    <div class="lesson-body open">
+      <div class="flow" style="flex-direction:column;align-items:stretch;gap:4px;">
+        <div class="flow-step red" style="text-align:center;font-size:16px;">🏛️ 憲法（最高規範）── 牴觸者無效</div>
+        <div class="flow-arrow" style="text-align:center;">↓</div>
+        <div class="flow-step" style="text-align:center;">法律（立法院三讀通過，總統公布）</div>
+        <div class="flow-arrow" style="text-align:center;">↓</div>
+        <div class="flow-step gold" style="text-align:center;">法規命令（行政機關訂定，需法律授權）── 牴觸法律者無效</div>
+        <div class="flow-arrow" style="text-align:center;">↓</div>
+        <div class="flow-step green" style="text-align:center;">行政規則（機關內部管理，不對外發生效力）</div>
+        <div class="flow-arrow" style="text-align:center;">↓</div>
+        <div class="flow-step" style="text-align:center;">地方自治法規（不得牴觸中央法規）</div>
+      </div>
+
+      <h4>公法 vs 私法 vs 社會法（三元結構）</h4>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th class="compare-hdr">類別</th><th class="compare-hdr">公法</th><th class="compare-hdr">私法</th><th class="compare-hdr">社會法（介於中間）</th></tr>
+          <tr><td>規範對象</td><td>國家（公權力）與人民</td><td>私人間平等關係</td><td>弱勢保護、勞資關係</td></tr>
+          <tr><td>代表法律</td><td>憲法、行政法、刑法、訴訟法</td><td>民法（物債親繼）、商事法</td><td>勞動基準法、消費者保護法、社會保險法</td></tr>
+          <tr><td>爭議管轄</td><td>行政法院、刑事法院</td><td>普通民事法院</td><td>勞動法院（2019年起）、普通法院</td></tr>
+          <tr><td>原則</td><td>依法行政（須有法律依據）</td><td>私法自治（契約自由）</td><td>國家干預保護弱者</td></tr>
+          <tr><td>舉例</td><td>警察取締、政府徵稅、刑事起訴</td><td>買賣、租賃、借貸、婚姻</td><td>最低工資、勞工保險、消費申訴</td></tr>
+        </table>
+      </div>
+
+      <h4>三種訴訟比較（刑事/民事/行政）</h4>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th></th><th>刑事訴訟</th><th>民事訴訟</th><th>行政訴訟</th></tr>
+          <tr><td>當事人</td><td>國家（檢察官）vs 被告</td><td>原告 vs 被告（私人）</td><td>人民 vs 行政機關</td></tr>
+          <tr><td>目的</td><td class="red-cell">追究刑責、社會秩序</td><td>定紛止爭、金錢賠償</td><td>審查行政合法性、保障人民</td></tr>
+          <tr><td>舉證責任</td><td class="red-cell">檢察官；被告有沉默權</td><td>誰主張誰舉證</td><td>行政機關須說明合法性</td></tr>
+          <tr><td>法院</td><td>普通法院（刑事庭）</td><td>普通法院（民事庭）</td><td>行政法院</td></tr>
+          <tr><td>審級</td><td>三審（地院→高院→最高）</td><td>三審</td><td>二審（地行→高行）或三審</td></tr>
+          <tr><td>前置程序</td><td>無（部分自訴除外）</td><td>調解優先（家事、勞動）</td><td class="red-cell">部分須先訴願（行政處分）</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- CIVIL LAW CONTRACTS -->
+  <div class="lesson-block">
+    <div class="lesson-header" onclick="toggleLesson(this)">
+      <div class="lesson-num">F</div><h3>民法各編體系（對應圖片3：民法重要考點圖）</h3><span class="caret">▼</span>
+    </div>
+    <div class="lesson-body">
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>民法編別</th><th>內容</th><th>重要考點</th></tr>
+          <tr><td class="red-cell">總則編（§1–§152）</td><td>權利能力、行為能力、法律行為、時效</td><td>成年18歲；行為能力分類；意思表示瑕疵（錯誤§88、詐欺§92、脅迫§93）</td></tr>
+          <tr><td class="blue-cell">債編（§153–§756之9）</td><td>契約法、侵權行為、不當得利</td><td>契約成立要件（要約+承諾）；侵權行為§184；定型化契約§247-1</td></tr>
+          <tr><td class="blue-cell">物權編（§757–§966）</td><td>所有權、地上權、抵押權等</td><td>物權法定主義§757；不動產登記對抗或生效；抵押、質權</td></tr>
+          <tr><td class="red-cell">親屬編（§967–§1137）</td><td>婚姻、親子、收養、監護</td><td>法定夫妻財產制；父母子女關係；監護宣告</td></tr>
+          <tr><td class="red-cell">繼承編（§1138–§1225）</td><td>法定繼承、遺囑、特留分</td><td>繼承順序§1138；應繼分§1144；特留分§1223；代位繼承§1140</td></tr>
+        </table>
+      </div>
+
+      <h4>重要民法考點：法律行為效力</h4>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>情形</th><th>效力</th><th>法條</th><th>例子</th></tr>
+          <tr><td class="red-cell">無行為能力人所為（未滿7歲）</td><td class="red-cell">無效（絕對）</td><td>§75</td><td>6歲小孩簽的買賣契約→無效</td></tr>
+          <tr><td class="blue-cell">限制行為能力人（7–18歲）</td><td class="blue-cell">效力未定（待法定代理人承認）</td><td>§77</td><td>15歲買手機未經父母同意→家長可拒絕承認→契約無效</td></tr>
+          <tr><td class="blue-cell">成年人受監護宣告</td><td class="red-cell">同無行為能力（無效）</td><td>§14、§15</td><td>—</td></tr>
+          <tr><td class="blue-cell">受輔助宣告（精神耗弱）</td><td class="blue-cell">需輔助人同意（重要行為）</td><td>§15之2</td><td>—</td></tr>
+          <tr><td class="blue-cell">錯誤（重要性質錯誤）</td><td class="blue-cell">得撤銷（知悉後1年）</td><td>§88</td><td>買到假貨（誤認真品）→可撤銷</td></tr>
+          <tr><td class="red-cell">詐欺/脅迫</td><td class="red-cell">得撤銷（知悉/脫離後1年，最長10年）</td><td>§92、§93</td><td>被詐騙簽的契約→可撤銷</td></tr>
+          <tr><td class="red-cell">違反強行規定/公序良俗</td><td class="red-cell">無效（自始、當然、確定）</td><td>§71、§72</td><td>賣人口、押注人身自由的契約→無效</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="page" id="page-compare-econ">
+  <div class="book-title" style="background: var(--gold);">
+    <h2>📊 經濟指標速查總表</h2>
+  </div>
+  <div class="lesson-block">
+    <div class="lesson-header open" onclick="toggleLesson(this)">
+      <div class="lesson-num">✦</div><h3>重要經濟概念速查</h3><span class="caret">▼</span>
+    </div>
+    <div class="lesson-body open">
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>指標</th><th>定義</th><th>公式/數值（台灣參考）</th></tr>
+          <tr><td class="red-cell">GDP（支出法）</td><td>一國一年內生產的最終商品和服務市值</td><td>C + I + G + (X-M)</td></tr>
+          <tr><td class="blue-cell">CPI（通膨）</td><td>消費者物價指數</td><td>台灣2024年通膨約2~3%</td></tr>
+          <tr><td class="blue-cell">失業率</td><td>失業人數 / 勞動力 × 100%</td><td>台灣2024年約3.4%</td></tr>
+          <tr><td class="blue-cell">基本工資</td><td>法定最低月薪</td><td class="red-cell">2026年 29,500元（時薪196元）</td></tr>
+          <tr><td class="blue-cell">重貼現率</td><td>央行基準利率</td><td>台灣2024年約2.0%</td></tr>
+          <tr><td class="red-cell">吉尼係數</td><td>衡量所得分配不均（0最均，1最不均）</td><td>台灣約0.34</td></tr>
+          <tr><td class="blue-cell">五等分位差</td><td>最高20%收入 / 最低20%收入</td><td>台灣約6倍</td></tr>
+        </table>
+      </div>
+
+      <h4>財政政策 vs 貨幣政策</h4>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th class="compare-hdr">項目</th><th class="compare-hdr">財政政策</th><th class="compare-hdr">貨幣政策</th></tr>
+          <tr><td>執行機關</td><td class="blue-cell">政府（行政院/財政部）</td><td class="red-cell">中央銀行</td></tr>
+          <tr><td>工具</td><td>稅收、政府支出</td><td>利率、準備率、公開市場操作</td></tr>
+          <tr><td>景氣擴張</td><td>增加支出、減稅（赤字財政）</td><td>降息、降準備率、買債券</td></tr>
+          <tr><td>景氣緊縮</td><td>減少支出、增稅（盈餘財政）</td><td>升息、升準備率、賣債券</td></tr>
+          <tr><td>時間落差</td><td class="red-cell">較長（立法程序）</td><td class="blue-cell">較短（決策靈活）</td></tr>
+          <tr><td>排擠效果</td><td class="red-cell">有（借貸推高利率）</td><td>無</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ HUMAN RIGHTS PAGE ============================================================ -->
+<div class="page" id="page-human-rights">
+  <div class="book-title" style="background: var(--red);">
+    <h2>🌏 人權完全解析：消極/積極 · 三代人權 · 國際公約</h2>
+  </div>
+
+  <div class="lesson-block">
+    <div class="lesson-header open" onclick="toggleLesson(this)">
+      <div class="lesson-num">1</div><h3>消極人權 vs 積極人權</h3><span class="caret">▼</span>
+    </div>
+    <div class="lesson-body open">
+      <div class="box box-red">
+        <div class="box-title">🔴 核心辨別口訣</div>
+        消極人權：「國家<span class="red">不要動我</span>」── 要求國家不作為、不干預<br>
+        積極人權：「國家<span class="blue">請幫助我</span>」── 要求國家積極提供資源或服務
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th class="compare-hdr">面向</th><th class="compare-hdr">消極人權（自由權）</th><th class="compare-hdr">積極人權（社會權）</th></tr>
+          <tr><td>本質</td><td>排除國家干預，保護個人自由空間</td><td>要求國家積極作為，實現實質平等</td></tr>
+          <tr><td>國家義務</td><td class="red-cell">不作為（禁止侵害）</td><td class="blue-cell">積極作為（提供資源）</td></tr>
+          <tr><td>代表權利</td><td>言論自由、人身自由、宗教自由、集會自由</td><td>受教育、工作、健康、社會安全、住宅</td></tr>
+          <tr><td>主要來源</td><td>公民政治權利公約（ICCPR）</td><td>經濟社會文化權利公約（ICESCR）</td></tr>
+          <tr><td>保障方式</td><td>法院可直接強制</td><td>須透過立法逐步實現（漸進義務）</td></tr>
+          <tr><td>憲法條文</td><td>§8–§14</td><td>§15、§152–§157</td></tr>
+          <tr><td>生活例子</td><td>不被警察無故逮捕、可自由批評政府</td><td>政府提供健保、失業救助、義務教育</td></tr>
+        </table>
+      </div>
+      <div class="exam-alert">注意：消極/積極並非截然二分！現代人權理論認為，<span class="red">所有人權都同時有消極與積極面向</span>。例如：言論自由（消極：政府不得審查；積極：政府應建立媒體多元環境）</div>
+    </div>
+  </div>
+
+  <div class="lesson-block">
+    <div class="lesson-header open" onclick="toggleLesson(this)">
+      <div class="lesson-num">2</div><h3>人權三代理論（Karel Vasak，1977）</h3><span class="caret">▼</span>
+    </div>
+    <div class="lesson-body open">
+      <div class="tbl-wrap">
+        <table>
+          <tr><th class="compare-hdr">世代</th><th class="compare-hdr">第一代人權<br>（自由權）</th><th class="compare-hdr">第二代人權<br>（社會權）</th><th class="compare-hdr">第三代人權<br>（連帶權）</th></tr>
+          <tr><td>法國大革命口號</td><td class="red-cell">自由（Liberté）</td><td class="blue-cell">平等（Égalité）</td><td class="green" style="color:var(--green);font-weight:700;">博愛（Fraternité）</td></tr>
+          <tr><td>形成時期</td><td>17–18世紀啟蒙運動</td><td>19–20世紀工業革命</td><td>20世紀後期至今</td></tr>
+          <tr><td>權利主體</td><td>個人對抗國家</td><td>個人要求國家</td><td>集體、民族、全人類</td></tr>
+          <tr><td>性質</td><td>消極（不干預）</td><td>積極（提供服務）</td><td>連帶（國際合作）</td></tr>
+          <tr><td>代表權利</td><td>言論、人身、宗教、財產、政治參與</td><td>勞動、教育、健康、社會安全、適當生活水準</td><td>發展權、和平權、環境權、人道救援、文化遺產</td></tr>
+          <tr><td>代表公約</td><td>ICCPR（公民政治權利公約）</td><td>ICESCR（經社文公約）</td><td>聯合國宣言、氣候公約等</td></tr>
+          <tr><td>批評</td><td>忽視貧窮、弱勢無法實質享有</td><td>資源有限，履行困難；「漸進實現」彈性過大</td><td>概念模糊，難以司法執行</td></tr>
+          <tr><td>台灣連結</td><td>憲§8–§14；兩公約施行法</td><td>憲§152–§157；健保、勞保</td><td>氣候法、碳費；原住民族文化保存</td></tr>
+        </table>
+      </div>
+      <div class="box box-blue">
+        <div class="box-title">記憶方法</div>
+        第一代：「我要自由，國家走開！」（個人自由）<br>
+        第二代：「我要溫飽，國家來幫！」（社會保障）<br>
+        第三代：「我們要永續，地球一起救！」（全球連帶）
+      </div>
+
+      <h4>重要國際人權公約完整整理</h4>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>公約名稱（縮寫）</th><th>年份</th><th>核心保障</th><th>監督機制</th><th>台灣</th></tr>
+          <tr><td class="red-cell">世界人權宣言（UDHR）</td><td>1948</td><td>30條基本原則，第一代+第二代</td><td>無強制力（宣示性）</td><td>精神基礎</td></tr>
+          <tr><td class="red-cell">ICCPR（公政公約）</td><td>1966</td><td>生命、自由、言論、集會、選舉、公平審判</td><td>人權事務委員會；國家報告</td><td>2009年施行法，效力等同法律</td></tr>
+          <tr><td class="blue-cell">ICESCR（經社文公約）</td><td>1966</td><td>工作、教育、健康、住宅、適當生活水準</td><td>漸進實現義務</td><td>2009年施行法，效力等同法律</td></tr>
+          <tr><td class="blue-cell">CEDAW（消除婦女歧視）</td><td>1979</td><td>性別平等、反歧視、消除對婦女一切形式歧視</td><td>CEDAW委員會；定期審查</td><td>2011年施行法；定期接受審查</td></tr>
+          <tr><td class="blue-cell">CRC（兒童權利）</td><td>1989</td><td>生存、發展、受保護、參與四大原則</td><td>兒童權利委員會</td><td>2014年施行法</td></tr>
+          <tr><td class="blue-cell">CRPD（身障人士）</td><td>2006</td><td>身心障礙者平等參與社會、無障礙環境</td><td>身障委員會</td><td>2014年施行法</td></tr>
+          <tr><td class="blue-cell">CAT（禁止酷刑）</td><td>1984</td><td>禁止酷刑、不人道或有辱人格待遇</td><td>禁止酷刑委員會</td><td>未施行，但實質遵守</td></tr>
+        </table>
+      </div>
+      <div class="box box-red">
+        <div class="box-title">🔴 台灣人權公約的特殊地位</div>
+        台灣非聯合國會員，無法正式締約。解決方式：透過<span class="red">「施行法」</span>使公約具有「國內法律」效力。<br>
+        效力位階：施行法使公約「具有國內法律之效力」→效力等同<span class="red">法律</span>（非憲法層級）。<br>
+        若與憲法牴觸→憲法優先；若與一般法律牴觸→公約優先（後法優於前法原則）。<br>
+        定期審查：邀請國際專家來台進行「國際審查」，彌補非締約國的監督缺口。
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ TAIWAN RELATIONS PAGE ============================================================ -->
+<div class="page" id="page-taiwan-relations">
+  <div class="book-title" style="background: var(--blue);">
+    <h2>🌐 台灣的國際關係：美中台 · 邦交國 · 國際組織</h2>
+  </div>
+
+  <div class="lesson-block">
+    <div class="lesson-header open" onclick="toggleLesson(this)">
+      <div class="lesson-num">1</div><h3>台美關係</h3><span class="caret">▼</span>
+    </div>
+    <div class="lesson-body open">
+      <div class="box box-blue">
+        <div class="box-title">台美關係的法律基礎</div>
+        美國於1979年與中華民國斷交，轉承認中華人民共和國。但同年通過《台灣關係法》（Taiwan Relations Act），維持非官方關係實質。
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>文件/機制</th><th>年份</th><th>內容</th><th>重要性</th></tr>
+          <tr><td class="red-cell">台灣關係法（TRA）</td><td>1979</td><td>①美方承諾維持台灣「足夠防禦能力」；②視任何以非和平方式決定台灣前途為「嚴重關切」；③設立AIT（美國在台協會）</td><td>台灣安全保障的法律基礎</td></tr>
+          <tr><td class="blue-cell">六項保證（1982）</td><td>1982</td><td>美國向台灣保證：不設武器售台截止日、不修改TRA、不充當調停人等六項承諾</td><td>補充TRA，釐清美中關係</td></tr>
+          <tr><td class="blue-cell">台灣旅行法（2018）</td><td>2018</td><td>鼓勵美台各層級官員互訪，包括部長級以上</td><td>提升台美官方實質關係</td></tr>
+          <tr><td class="blue-cell">台灣政策法（2022討論）</td><td>2022</td><td>討論中的法案，擬提升台灣地位、增加軍售，部分條款已納入其他法案</td><td>強化台美實質同盟</td></tr>
+          <tr><td class="red-cell">TIFA（貿易暨投資架構協定）</td><td>1994重啟</td><td>台美貿易投資對話機制；2021年重啟，2025年川普政府施壓貿易平衡</td><td>雙邊經貿協議基礎</td></tr>
+        </table>
+      </div>
+      <div class="box box-red">
+        <div class="box-title">🔴 美國的「戰略模糊」政策</div>
+        美國對「是否軍事保衛台灣」故意保持模糊，不明確承諾也不否認。<br>
+        目的：①讓中國不敢輕易武力犯台（威懾）②避免台灣單方面宣獨（約束）<br>
+        爭議：川普2024年表示「台灣應付費請美國保護」→引發「戰略明確化」討論
+      </div>
+    </div>
+  </div>
+
+  <div class="lesson-block">
+    <div class="lesson-header open" onclick="toggleLesson(this)">
+      <div class="lesson-num">2</div><h3>兩岸關係（台灣與中國）</h3><span class="caret">▼</span>
+    </div>
+    <div class="lesson-body open">
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>文件/主張</th><th>內容</th><th>台灣立場</th><th>中國立場</th></tr>
+          <tr><td class="red-cell">一個中國政策</td><td>「世界上只有一個中國」——但對「誰是中國」各方說法不同</td><td>中華民國是主權國家（蔡英文）；九二共識各表（國民黨）</td><td>只有中華人民共和國代表中國；台灣是中國一部分</td></tr>
+          <tr><td class="red-cell">九二共識（1992）</td><td>1992年兩岸代表（海基會/海協會）達成「一個中國，各自表述」的默契</td><td>爭議：是否存在？民進黨否認其為「共識」</td><td>堅持有此共識，台灣應接受</td></tr>
+          <tr><td class="blue-cell">兩岸協議（2008–2016）</td><td>馬英九時代簽署23項協議，含三通（通郵、通商、通航）</td><td>擴大交流但保持主權</td><td>積極推進</td></tr>
+          <tr><td class="red-cell">反分裂國家法（2005）</td><td>中國法律：若台灣宣獨或分裂的可能性窮盡，可動用「非和平方式」</td><td>反對、視為威脅</td><td>法律保障統一</td></tr>
+          <tr><td class="blue-cell">ECFA（兩岸經濟合作框架協議）</td><td>2010年簽署，降低兩岸貿易關稅</td><td>部分持續，服貿協議2014年受阻（太陽花）</td><td>推進中</td></tr>
+        </table>
+      </div>
+      <div class="box box-red">
+        <div class="box-title">🔴 2024–2026 兩岸最新局勢</div>
+        ①賴清德當選（2024）：中共定性為「台獨」，加強軍事施壓，頻繁軍演<br>
+        ②海基/海協會溝通管道：自2016年起中斷官方交流<br>
+        ③中國加強對台「灰色地帶」行動：無人機騷擾、認知作戰、網路攻擊<br>
+        ④台灣國防：義務役恢復一年（2024起），國防預算持續增加<br>
+        ⑤國際社會：美日澳等國頻繁表態關注台海和平穩定
+      </div>
+    </div>
+  </div>
+
+  <div class="lesson-block">
+    <div class="lesson-header open" onclick="toggleLesson(this)">
+      <div class="lesson-num">3</div><h3>台灣的邦交國與國際參與</h3><span class="caret">▼</span>
+    </div>
+    <div class="lesson-body open">
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>區域</th><th>邦交國（2025年）</th><th>特色</th></tr>
+          <tr><td class="blue-cell">太平洋</td><td>馬紹爾群島、帛琉、吐瓦魯、諾魯（2024年1月斷交→中）</td><td>島嶼小國；戰略位置重要</td></tr>
+          <tr><td class="blue-cell">中美洲</td><td>瓜地馬拉、貝里斯、宏都拉斯（2023年斷交）、海地、聖克里斯多福及尼維斯、聖露西亞、聖文森及格瑞那丁</td><td>歷史邦交；部分不穩定</td></tr>
+          <tr><td class="blue-cell">南美洲</td><td>巴拉圭（唯一）</td><td>南美唯一邦交國</td></tr>
+          <tr><td class="blue-cell">非洲</td><td>史瓦帝尼（唯一）</td><td>非洲唯一邦交國</td></tr>
+          <tr><td class="blue-cell">歐洲</td><td>梵蒂岡（教廷）</td><td>歐洲唯一，亦為全球最小國家</td></tr>
+          <tr><td class="red-cell">總計（2025）</td><td>約12個邦交國（持續減少）</td><td>2016年以來已有多國轉向中國</td></tr>
+        </table>
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>國際組織</th><th>台灣參與狀況</th><th>說明</th></tr>
+          <tr><td class="red-cell">聯合國（UN）</td><td>非會員</td><td>1971年由中共取代；2007年陳水扁申請加入遭拒</td></tr>
+          <tr><td class="red-cell">WHO（世界衛生組織）</td><td>非會員（觀察員遭阻）</td><td>2009–2016年以「中華台北」身份出席；COVID後再被拒</td></tr>
+          <tr><td class="blue-cell">WTO</td><td>✅ 會員（1994年，以「台澎金馬個別關稅領域」名義）</td><td>貿易爭端可透過WTO解決</td></tr>
+          <tr><td class="blue-cell">APEC</td><td>✅ 會員（以「中華台北」名義）</td><td>領袖峰會須由特使代替總統出席</td></tr>
+          <tr><td class="blue-cell">奧運</td><td>✅「中華台北」（Chinese Taipei）</td><td>1981年協議；不能使用國旗國歌</td></tr>
+          <tr><td class="blue-cell">CPTPP</td><td>申請中（2021年申請）</td><td>中國同時申請，政治障礙；尚未正式審議</td></tr>
+          <tr><td class="blue-cell">IPEF（印太經濟框架）</td><td>未納入（2022）</td><td>拜登政府未將台灣納入，引發討論</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ ELECTION SYSTEMS PAGE ============================================================ -->
+<div class="page" id="page-election-systems">
+  <div class="book-title" style="background: var(--blue);">
+    <h2>🗳️ 選舉制度完全比較：總統制 · 內閣制 · 雙首長制</h2>
+  </div>
+
+  <div class="lesson-block">
+    <div class="lesson-header open" onclick="toggleLesson(this)">
+      <div class="lesson-num">1</div><h3>選舉制度類型完整比較</h3><span class="caret">▼</span>
+    </div>
+    <div class="lesson-body open">
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>制度名稱</th><th>說明</th><th>優點</th><th>缺點</th><th>使用國</th></tr>
+          <tr>
+            <td class="red-cell">相對多數決<br>（FPTP）</td>
+            <td>得票最多者當選，不須過半</td>
+            <td>簡單明瞭；產生多數黨；政局穩定</td>
+            <td>大量選票浪費；小黨難生存；不能反映多元民意</td>
+            <td>美國（國會）、英國（下議院）、台灣（區域立委）</td>
+          </tr>
+          <tr>
+            <td class="blue-cell">絕對多數決<br>（兩輪投票）</td>
+            <td>第一輪未過半→前兩名進第二輪決選</td>
+            <td>當選者有過半支持；較能代表民意</td>
+            <td>選舉成本高；需兩輪</td>
+            <td>法國總統、法國國會（第一輪+決選）</td>
+          </tr>
+          <tr>
+            <td class="blue-cell">政黨比例代表制<br>（PR）</td>
+            <td>依政黨得票比例分配席次</td>
+            <td>小黨有機會；選票浪費少；多元民意呈現</td>
+            <td>容易出現多黨聯合政府；政局較不穩定</td>
+            <td>荷蘭、以色列、台灣不分區立委、歐洲議會</td>
+          </tr>
+          <tr>
+            <td class="blue-cell">混合制<br>（並立制）</td>
+            <td>部分席次用單一選區、部分用比例</td>
+            <td>兼顧地區代表性與比例性</td>
+            <td>複雜；可能出現「票票不等值」</td>
+            <td>台灣立委（區域73+不分區34+原住民6）、德國、日本</td>
+          </tr>
+          <tr>
+            <td class="blue-cell">排序投票制<br>（AV/IRV）</td>
+            <td>投票者標記第一選擇、第二選擇等，循環淘汰直到過半</td>
+            <td>避免「策略性投票」；當選者有廣泛支持</td>
+            <td>計票複雜；投票者需理解排序</td>
+            <td>澳洲（下議院）、愛爾蘭</td>
+          </tr>
+          <tr>
+            <td class="blue-cell">單記不可讓渡投票<br>（SNTV）</td>
+            <td>每人只能投一票，選區多席次，得票多者依序當選</td>
+            <td>中小黨有機會</td>
+            <td>候選人可能瓜分自家選票；策略性投票嚴重</td>
+            <td>台灣舊制（2005年前區域立委）、阿富汗</td></tr>
+        </table>
+      </div>
+
+      <h4>台灣各類選舉制度整理</h4>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>選舉</th><th>制度</th><th>門檻</th><th>備注</th></tr>
+          <tr><td class="red-cell">總統</td><td>相對多數決（一輪）</td><td>得票最多者當選</td><td>每4年；連選得連任一次；40歲以上</td></tr>
+          <tr><td class="blue-cell">立委─區域</td><td>單一選區相對多數決（FPTP）</td><td>73席，每選區1席，得票最多當選</td><td>每4年；23歲以上</td></tr>
+          <tr><td class="blue-cell">立委─不分區</td><td>政黨比例代表制</td><td>34席；政黨須得5%以上政黨票才分配席次</td><td>由各黨依得票比例分配</td></tr>
+          <tr><td class="blue-cell">立委─原住民</td><td>單一選區相對多數決</td><td>平地3席、山地3席，共6席</td><td>原住民選舉人投票</td></tr>
+          <tr><td class="blue-cell">縣市長/直轄市長</td><td>相對多數決</td><td>得票最多者當選</td><td>每4年；任期最多兩任</td></tr>
+          <tr><td class="blue-cell">縣市議員</td><td>SNTV（複數選區單記不可讓渡）</td><td>按得票多少依序當選</td><td>沿用舊選制</td></tr>
+          <tr><td class="blue-cell">公民投票</td><td>—</td><td>通過：有效同意票 > 有效不同意票 且 同意票 > 1/4 投票權人</td><td>18歲以上；提案需1%選舉人連署</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="lesson-block">
+    <div class="lesson-header open" onclick="toggleLesson(this)">
+      <div class="lesson-num">2</div><h3>三大政府體制 × 選舉制度互動</h3><span class="caret">▼</span>
+    </div>
+    <div class="lesson-body open">
+      <div class="tbl-wrap">
+        <table>
+          <tr><th class="compare-hdr">體制</th><th class="compare-hdr">總統制（美國）</th><th class="compare-hdr">內閣制（英國）</th><th class="compare-hdr">雙首長制（法/台）</th></tr>
+          <tr><td>行政首長選出方式</td><td>全國普選（間接：選舉人團）</td><td>國會多數黨領袖自動出任</td><td>全民直選（法/台）</td></tr>
+          <tr><td>行政穩定性</td><td>固定任期，非常穩定</td><td>可因不信任投票被倒閣</td><td>中等；總統固定任期但閣揆可倒閣</td></tr>
+          <tr><td>分裂政府可能</td><td class="red-cell">高（總統與國會多數不同黨）</td><td>低（執政黨通常控制國會）</td><td>可能出現左右共治</td></tr>
+          <tr><td>行政立法關係</td><td>嚴格分立（行政官員不得兼議員）</td><td>高度融合（閣員多為議員）</td><td>混合</td></tr>
+          <tr><td>代表優點</td><td>穩定、制衡清楚</td><td>效率高、行政立法協調</td><td>民選正當性高，兼顧穩定與靈活</td></tr>
+          <tr><td>代表缺點</td><td>僵局、否決政治</td><td>多數黨獨大、少數壓制</td><td>雙頭馬車、責任歸屬模糊</td></tr>
+          <tr><td>台灣實際例子</td><td>—</td><td>—</td><td>2024年：賴清德（民進黨）當總統，立院在野黨過半→少數政府困境</td></tr>
+        </table>
+      </div>
+
+      <h4>罷免制度（台灣）</h4>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>對象</th><th>提案門檻</th><th>通過門檻</th><th>限制</th></tr>
+          <tr><td class="red-cell">總統</td><td>全體立委1/4提議，2/3決議提案→公告</td><td>有投票權人過半數同意</td><td>就職未滿一年不得提案</td></tr>
+          <tr><td class="blue-cell">立法委員/地方首長</td><td>原選舉區選舉人1/4連署</td><td>有投票權人1/4投票且過半同意</td><td>就職未滿一年不得提案；任期最後一年不得提案</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ MEDIA LITERACY PAGE ============================================================ -->
+<div class="page" id="page-media-law">
+  <div class="book-title" style="background: var(--blue);">
+    <h2>📡 媒體識讀 · 憲法/法律/命令位階 · 中央/地方政府</h2>
+  </div>
+
+  <div class="lesson-block">
+    <div class="lesson-header open" onclick="toggleLesson(this)">
+      <div class="lesson-num">1</div><h3>媒體識讀完全指南</h3><span class="caret">▼</span>
+    </div>
+    <div class="lesson-body open">
+      <div class="box box-red">
+        <div class="box-title">什麼是媒體識讀（Media Literacy）？</div>
+        識讀媒體訊息的能力：能「解碼」媒體內容、理解其生產背景、辨別真假偏見，並批判性地運用媒體。<br>
+        核心能力：<span class="red">接收→分析→評估→創造→行動</span>
+      </div>
+
+      <h4>媒體效果理論（考試常出現）</h4>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>理論</th><th>學者/提出</th><th>說明</th><th>生活例子</th></tr>
+          <tr><td class="red-cell">議題設定效果<br>（Agenda Setting）</td><td>麥康（McCombs）等，1972</td><td>媒體決定「哪些議題重要」→影響民眾關注什麼</td><td>選舉前某新聞台狂播某候選人醜聞→民眾以為貪腐是選舉最重要議題</td></tr>
+          <tr><td class="red-cell">框架效果<br>（Framing Effect）</td><td>戈夫曼（Goffman）等</td><td>媒體決定「如何描述議題」→影響民眾如何理解</td><td>難民：「逃難中的家庭」（同情）vs「非法移民大軍」（恐懼）—同一事件，不同框架</td></tr>
+          <tr><td class="blue-cell">初始化效果<br>（Priming）</td><td>Iyengar & Kinder</td><td>媒體讓某議題突出→民眾用該議題評價政治人物</td><td>大量報導通膨→民眾以通膨問題評判總統執政</td></tr>
+          <tr><td class="blue-cell">沉默螺旋<br>（Spiral of Silence）</td><td>諾依曼（Noelle-Neumann）</td><td>人們感知多數意見後，少數意見者傾向沉默→主流意見看似更主流</td><td>看到網路上充滿某黨支持者留言→自己持反對意見但不敢發言</td></tr>
+          <tr><td class="blue-cell">回音室效應<br>（Echo Chamber）</td><td>現代社群媒體研究</td><td>演算法只推送你同意的內容→只聽到與自己相同的聲音</td><td>只看某色媒體→認為全世界都支持自己的立場</td></tr>
+          <tr><td class="blue-cell">第三人效果<br>（Third Person Effect）</td><td>Davison，1983</td><td>「別人比我更容易被媒體影響」的心理→支持媒體審查</td><td>「假訊息影響不了我，但會影響低資訊的選民」</td></tr>
+        </table>
+      </div>
+
+      <h4>假訊息辨別五步驟（SIFT方法）</h4>
+      <div class="flow">
+        <div class="flow-step red">Stop（停下來）</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step gold">Investigate（查來源）</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">Find better coverage（找更好來源）</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step green">Trace claims（追蹤原始出處）</div>
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>假訊息類型</th><th>定義</th><th>例子</th></tr>
+          <tr><td class="red-cell">錯誤資訊（Misinformation）</td><td>不正確的資訊，無論有無意圖</td><td>誤傳某藥物有效（未查實）</td></tr>
+          <tr><td class="red-cell">虛假資訊（Disinformation）</td><td>故意製造散布的錯誤資訊</td><td>選舉前故意散布候選人不實謠言</td></tr>
+          <tr><td class="red-cell">惡意資訊（Malinformation）</td><td>真實但被惡意使用的資訊</td><td>洩露私人照片損害名譽（性影像保護法規範）</td></tr>
+          <tr><td class="blue-cell">深偽（Deepfake）</td><td>AI合成的虛假影音</td><td>換臉詐騙、選舉假影片</td></tr>
+        </table>
+      </div>
+      <div class="exam-alert">台灣法律規範：散布假訊息可能觸犯刑法§251（妨害農工商）、§309（公然侮辱）、§310（誹謗罪），以及選罷法相關規定。性影像Deepfake：性影像保護法（2023）</div>
+    </div>
+  </div>
+
+  <div class="lesson-block">
+    <div class="lesson-header open" onclick="toggleLesson(this)">
+      <div class="lesson-num">2</div><h3>憲法/法律/命令 位階與分辨</h3><span class="caret">▼</span>
+    </div>
+    <div class="lesson-body open">
+      <div class="tbl-wrap">
+        <table>
+          <tr><th class="compare-hdr">類型</th><th class="compare-hdr">憲法</th><th class="compare-hdr">法律</th><th class="compare-hdr">法規命令</th><th class="compare-hdr">行政規則</th></tr>
+          <tr><td>位階</td><td class="red-cell">最高（第一位）</td><td class="blue-cell">第二位</td><td>第三位</td><td>第四位（內部）</td></tr>
+          <tr><td>制定機關</td><td>修憲：立院3/4出席3/4決議→公民複決</td><td>立法院三讀通過→總統公布</td><td>行政機關（需法律授權）</td><td>行政機關（內部管理）</td></tr>
+          <tr><td>名稱形式</td><td>中華民國憲法、憲法增修條文</td><td>「法」（民法、刑法、所得稅法）</td><td>「施行細則」「辦法」「規則」「標準」「準則」</td><td>「要點」「注意事項」「作業規定」</td></tr>
+          <tr><td>牴觸效果</td><td>—（最高）</td><td>牴觸憲法→無效（憲法法庭宣告）</td><td>牴觸法律→無效（行政法院或聲請函釋）</td><td>僅對內有效，牴觸法律者無效</td></tr>
+          <tr><td>對人民效力</td><td>直接（可直接主張基本權）</td><td>直接</td><td>直接（須有法律授權）</td><td>原則上不直接對外</td></tr>
+          <tr><td>例子</td><td>§7平等權、§15財產權、增修§1立委席次</td><td>民法、刑法、勞動基準法、所得稅法</td><td>勞動基準法施行細則、所得稅法施行細則</td><td>各機關辦事要點、會計作業注意事項</td></tr>
+        </table>
+      </div>
+      <div class="box box-red">
+        <div class="box-title">🔴 考試必考：如何分辨「法律」與「命令」？</div>
+        法律：立法院三讀通過→命名為「法」「律」「條例」「通則」<br>
+        命令：行政機關訂定→命名為「規程」「規則」「細則」「辦法」「綱要」「標準」「準則」<br>
+        ⚠️ 命令必須有法律的授權依據，否則違反法律保留原則→無效<br>
+        ⚠️ 中央法規標準法§3：法律得定名為「法」「律」「條例」「通則」
+      </div>
+
+      <h4>法律保留原則 vs 法律優位原則</h4>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th></th><th>法律保留原則</th><th>法律優位原則</th></tr>
+          <tr><td>意義</td><td class="red-cell">某些事項「必須」由法律規定，行政機關不能自行決定</td><td class="blue-cell">行政行為「不得」違反現行法律</td></tr>
+          <tr><td>規範對象</td><td>積極面：法律的必要性</td><td>消極面：禁止違法</td></tr>
+          <tr><td>適用範圍</td><td>限制基本權利、課徵租稅、設置刑罰等</td><td>所有行政行為</td></tr>
+          <tr><td>例子</td><td>開罰款必須有法律依據（稅法、行政罰法）</td><td>行政命令不能違反勞基法規定</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="lesson-block">
+    <div class="lesson-header open" onclick="toggleLesson(this)">
+      <div class="lesson-num">3</div><h3>中央政府 vs 地方政府：權限劃分</h3><span class="caret">▼</span>
+    </div>
+    <div class="lesson-body open">
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>層級</th><th>行政</th><th>立法</th><th>司法</th><th>備注</th></tr>
+          <tr><td class="red-cell">中央政府</td><td>行政院及各部會</td><td>立法院（113席）</td><td>司法院、各級法院</td><td>處理全國性事務</td></tr>
+          <tr><td class="blue-cell">直轄市政府</td><td>市長（直選）、各局處</td><td>市議會</td><td>地方法院（由中央設置）</td><td>台北、新北、桃園、台中、台南、高雄</td></tr>
+          <tr><td class="blue-cell">縣市政府</td><td>縣市長（直選）</td><td>縣市議會</td><td>地方法院</td><td>16個縣市（含3省轄市）</td></tr>
+          <tr><td class="blue-cell">鄉鎮市區</td><td>鄉鎮市長/區長</td><td>鄉鎮市代表會（直轄市無）</td><td>無</td><td>直轄市下設「區」，無選舉（官派）</td></tr>
+        </table>
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>事項</th><th>中央專屬（§107）</th><th>中央立法地方執行（§108）</th><th>地方自治（§109–§110）</th></tr>
+          <tr><td>事務類型</td><td>外交、國防、幣制、航空、郵政、通訊、礦業、國有企業</td><td>教育、公共衛生、社會安全、土地法、勞動法</td><td>地方交通、公共工程、地方財政、觀光</td></tr>
+          <tr><td>法源</td><td>憲法§107</td><td>憲法§108</td><td>地方制度法</td></tr>
+        </table>
+      </div>
+      <div class="box box-red">
+        <div class="box-title">🔴 地方自治法規的位階</div>
+        自治條例（地方議會通過）→相當於「法律」層級，但不得牴觸中央法律<br>
+        自治規則（地方行政機關訂定）→相當於「命令」層級<br>
+        ⚠️ 地方與中央法規有所牴觸：中央法規優先（地制法§30）
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ ECONOMICS DEEP PAGE ============================================================ -->
+<div class="page" id="page-econ-deep">
+  <div class="book-title" style="background: var(--gold);">
+    <h2>📊 市場經濟深度解析：供需・進出口・匯率・貨幣</h2>
+  </div>
+
+  <div class="lesson-block">
+    <div class="lesson-header open" onclick="toggleLesson(this)">
+      <div class="lesson-num">1</div><h3>供需完整分析：移動 vs 移位，正確判斷</h3><span class="caret">▼</span>
+    </div>
+    <div class="lesson-body open">
+      <div class="box box-red">
+        <div class="box-title">🔴 最容易混淆的考試概念：「量的變動」vs「整條曲線移動」</div>
+        <span class="red">量的變動</span>（沿曲線移動）：只有「價格」改變 → 需求量/供給量改變（點在曲線上移動）<br>
+        <span class="blue">曲線移動</span>：「非價格因素」改變 → 需求/供給改變（整條曲線左移或右移）
+      </div>
+
+      <h4>需求曲線變動因素（記憶表）</h4>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>因素</th><th>變化</th><th>對需求的影響</th><th>例子</th></tr>
+          <tr><td class="red-cell">消費者所得（正常財）</td><td>↑增加</td><td class="red-cell">需求↑（右移）</td><td>薪資漲→買更多牛排</td></tr>
+          <tr><td class="red-cell">消費者所得（劣等財）</td><td>↑增加</td><td class="red-cell">需求↓（左移）</td><td>薪資漲→少搭公車，改開車</td></tr>
+          <tr><td class="blue-cell">替代品價格</td><td>↑增加</td><td class="blue-cell">本財需求↑（右移）</td><td>豬肉貴了→多買雞肉</td></tr>
+          <tr><td class="blue-cell">互補品價格</td><td>↑增加</td><td class="red-cell">本財需求↓（左移）</td><td>汽油貴了→少買汽車</td></tr>
+          <tr><td class="blue-cell">消費者偏好</td><td>↑增加</td><td class="blue-cell">需求↑（右移）</td><td>珍珠奶茶流行→需求大增</td></tr>
+          <tr><td class="blue-cell">預期未來價格</td><td>預期未來↑</td><td class="blue-cell">現在需求↑（右移）</td><td>颱風前預期蔬菜貴→搶購</td></tr>
+          <tr><td class="blue-cell">人口數量</td><td>↑增加</td><td class="blue-cell">需求↑（右移）</td><td>台灣少子化→嬰兒用品需求↓</td></tr>
+        </table>
+      </div>
+
+      <h4>均衡分析：供需同時移動（最難題型）</h4>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>情況</th><th>均衡量</th><th>均衡價格</th><th>說明</th></tr>
+          <tr><td class="red-cell">需求↑ 供給不變</td><td>↑</td><td>↑</td><td>—</td></tr>
+          <tr><td class="red-cell">需求↓ 供給不變</td><td>↓</td><td>↓</td><td>—</td></tr>
+          <tr><td class="blue-cell">供給↑ 需求不變</td><td>↑</td><td>↓</td><td>—</td></tr>
+          <tr><td class="blue-cell">供給↓ 需求不變</td><td>↓</td><td>↑</td><td>—</td></tr>
+          <tr><td class="gold" style="color:var(--gold);font-weight:700;">需求↑ 供給↑ 同幅</td><td>↑</td><td>不確定</td><td>量增；價不確定（看幅度）</td></tr>
+          <tr><td class="gold" style="color:var(--gold);font-weight:700;">需求↓ 供給↓ 同幅</td><td>↓</td><td>不確定</td><td>量減；價不確定</td></tr>
+          <tr><td class="gold" style="color:var(--gold);font-weight:700;">需求↑ 供給↓</td><td>不確定</td><td>↑</td><td>價漲；量不確定</td></tr>
+          <tr><td class="gold" style="color:var(--gold);font-weight:700;">需求↓ 供給↑</td><td>不確定</td><td>↓</td><td>價跌；量不確定</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="lesson-block">
+    <div class="lesson-header open" onclick="toggleLesson(this)">
+      <div class="lesson-num">2</div><h3>國際貿易完整分析：進出口・比較利益・貿易政策</h3><span class="caret">▼</span>
+    </div>
+    <div class="lesson-body open">
+      <h4>比較利益原則（必考）</h4>
+      <div class="box box-blue">
+        <div class="box-title">比較利益 vs 絕對利益</div>
+        <span class="red">絕對利益</span>（Adam Smith）：生產某物所需資源比他國少→有絕對優勢<br>
+        <span class="blue">比較利益</span>（Ricardo，1817）：專業生產<span class="red">機會成本相對較低</span>的商品，再互相貿易→雙方都獲益<br><br>
+        關鍵：即使A國生產所有東西都比B國有效率（絕對優勢），雙方依然可以透過比較利益互利貿易！
+      </div>
+      <div class="box box-grey" style="background:#f0f4f8;border-left:4px solid var(--blue);">
+        <div class="box-title">📖 比較利益計算例題</div>
+        假設台灣生產1台電腦要3天，生產1件衣服要1天。<br>
+        越南生產1台電腦要6天，生產1件衣服要1.5天。<br><br>
+        電腦機會成本：台灣=3件衣服；越南=4件衣服 → <span class="red">台灣比較利益在電腦</span><br>
+        衣服機會成本：台灣=1/3台電腦；越南=1/4台電腦 → <span class="blue">越南比較利益在衣服</span><br>
+        結論：台灣專產電腦，越南專產衣服，再貿易→雙方都比自給自足更有效率
+      </div>
+
+      <h4>貿易政策工具完整比較</h4>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>政策工具</th><th>機制</th><th>對消費者</th><th>對國內廠商</th><th>對政府</th><th>整體效率</th></tr>
+          <tr><td class="red-cell">關稅（進口稅）</td><td>進口品課稅，提高進口品價格</td><td class="red-cell">付更高價格（損）</td><td class="blue-cell">受保護（益）</td><td class="blue-cell">增加稅收（益）</td><td>整體無謂損失（效率↓）</td></tr>
+          <tr><td class="blue-cell">進口配額</td><td>限制進口數量上限</td><td class="red-cell">國內價格上漲（損）</td><td class="blue-cell">受保護（益）</td><td>無關稅收入（差異於關稅）</td><td>無謂損失；部分租金給進口商</td></tr>
+          <tr><td class="blue-cell">出口補貼</td><td>政府補助出口廠商降低成本</td><td class="red-cell">國內價格反升（損）</td><td class="blue-cell">競爭力↑（益）</td><td class="red-cell">財政支出（損）</td><td>資源錯置；他國可能報復</td></tr>
+          <tr><td class="blue-cell">非關稅壁壘</td><td>技術標準、檢疫、行政障礙</td><td>增加交易成本</td><td>受保護</td><td>—</td><td>效率↓；WTO限制但難規範</td></tr>
+          <tr><td class="green" style="color:var(--green);font-weight:700;">自由貿易（零關稅）</td><td>無限制貿易</td><td class="blue-cell">更低價格、更多選擇（益）</td><td class="red-cell">面臨進口競爭（部分損）</td><td>無關稅收入</td><td>整體社會福利最大化</td></tr>
+        </table>
+      </div>
+      <div class="exam-alert">WTO的核心原則：①最惠國待遇（MFN）：給任一成員的優惠必須給所有成員 ②國民待遇：外國商品在國內市場應受同等對待 ③關稅談判：逐步降低關稅</div>
+    </div>
+  </div>
+
+  <div class="lesson-block">
+    <div class="lesson-header open" onclick="toggleLesson(this)">
+      <div class="lesson-num">3</div><h3>匯率：貶值 vs 升值 完整分析</h3><span class="caret">▼</span>
+    </div>
+    <div class="lesson-body open">
+      <div class="box box-blue">
+        <div class="box-title">匯率定義</div>
+        匯率 = 本國貨幣換外國貨幣的比率<br>
+        例：1美元 = 32新台幣（匯率為32）<br>
+        <span class="red">台幣升值</span>：1美元 = 30台幣（需要更少台幣換1美元）<br>
+        <span class="blue">台幣貶值</span>：1美元 = 34台幣（需要更多台幣換1美元）
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th class="compare-hdr">面向</th><th class="compare-hdr">本幣升值（如：台幣升值）</th><th class="compare-hdr">本幣貶值（如：台幣貶值）</th></tr>
+          <tr><td>出口競爭力</td><td class="red-cell">↓ 降低（外國人覺得台灣貨更貴了）</td><td class="blue-cell">↑ 提高（外國人覺得台灣貨更便宜）</td></tr>
+          <tr><td>進口成本</td><td class="blue-cell">↓ 降低（進口品變便宜）</td><td class="red-cell">↑ 升高（進口品變貴）</td></tr>
+          <tr><td>通貨膨脹</td><td class="blue-cell">↓ 抑制（進口原料便宜）</td><td class="red-cell">↑ 可能加劇（進口成本推高物價）</td></tr>
+          <tr><td>出國旅遊</td><td class="blue-cell">更划算（台幣換更多外幣）</td><td class="red-cell">更貴（台幣換更少外幣）</td></tr>
+          <tr><td>外資吸引</td><td>可能↓（成本相對高）</td><td>可能↑（生產成本低）</td></tr>
+          <tr><td>外幣計價債務</td><td class="blue-cell">還債成本↓</td><td class="red-cell">還債成本↑（貶值危機）</td></tr>
+          <tr><td>誰受益</td><td>進口商、出國旅客、消費者</td><td>出口商、外資工廠、觀光業（吸引外國人來）</td></tr>
+          <tr><td>台灣實例</td><td>2023年台幣升→科技業出口獲利縮水</td><td>2022年台幣貶→出口競爭力↑但進口原物料成本↑</td></tr>
+        </table>
+      </div>
+
+      <h4>影響匯率的因素</h4>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>因素</th><th>對台幣的影響</th><th>說明</th></tr>
+          <tr><td class="red-cell">出口↑（貿易順差）</td><td>台幣升值</td><td>外國人買台灣貨→用外幣換台幣→台幣需求↑</td></tr>
+          <tr><td class="blue-cell">進口↑（貿易逆差）</td><td>台幣貶值</td><td>台灣人買外國貨→用台幣換外幣→台幣供給↑</td></tr>
+          <tr><td class="red-cell">台灣利率↑</td><td>台幣升值</td><td>外資投入台灣賺利差→外幣流入→台幣需求↑</td></tr>
+          <tr><td class="blue-cell">通膨率↑（台灣高於他國）</td><td>台幣貶值</td><td>台灣物價貴→出口競爭力↓→台幣需求↓</td></tr>
+          <tr><td class="blue-cell">外資撤出（Risk-off）</td><td>台幣貶值</td><td>外資賣台股換回外幣→台幣供給↑</td></tr>
+          <tr><td>央行干預</td><td>視方向而定</td><td>台灣央行常「隱性干預」阻止台幣過度升值（保護出口業）</td></tr>
+        </table>
+      </div>
+
+      <h4>貨幣制度類型</h4>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>制度</th><th>說明</th><th>優點</th><th>缺點</th><th>例子</th></tr>
+          <tr><td class="red-cell">浮動匯率</td><td>由市場供需決定匯率</td><td>自動調整，反映真實供需</td><td>匯率波動，不確定性高</td><td>美元、台幣（管理浮動）</td></tr>
+          <tr><td class="blue-cell">固定匯率</td><td>政府固定匯率，必要時用外匯儲備維持</td><td>穩定，有利貿易計畫</td><td>需消耗大量外匯儲備；可能被投機攻擊</td><td>港幣（聯繫匯率，7.8港元/美元）</td></tr>
+          <tr><td class="blue-cell">管理浮動</td><td>基本浮動，但央行適時干預避免過度波動</td><td>兼顧穩定與彈性</td><td>央行干預成本，可能被批評操縱匯率</td><td>台幣、人民幣</td></tr>
+          <tr><td class="blue-cell">貨幣聯盟</td><td>多國使用同一貨幣</td><td>消除匯率風險，促進貿易</td><td>喪失貨幣政策自主性</td><td>歐元區（20個歐盟國家）</td></tr>
+        </table>
+      </div>
+      <div class="exam-alert">台幣升值對半導體出口業者（如台積電）的影響：海外收入換回台幣減少→獲利縮水（但成本也有部分以台幣計，效果複雜）</div>
+    </div>
+  </div>
+</div>
+
+</div><!-- end main -->
+</div><!-- end wrapper -->
+
+<script>
+// ============ NAVIGATION ============
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.sb-item').forEach(i => i.classList.remove('active'));
+  const page = document.getElementById('page-' + id);
+  if (page) page.classList.add('active');
+  // update sidebar active
+  document.querySelectorAll('.sb-item').forEach(item => {
+    const onclick = item.getAttribute('onclick');
+    if (onclick && onclick.includes("'" + id + "'")) item.classList.add('active');
+  });
+  window.scrollTo(0, 0);
+}
+
+// ============ SIDEBAR TOGGLE ============
+function toggleSB(id) {
+  const el = document.getElementById(id);
+  if (el) el.classList.toggle('open');
+}
+
+// ============ LESSON TOGGLE ============
+function toggleLesson(header) {
+  header.classList.toggle('open');
+  const body = header.nextElementSibling;
+  if (body) body.classList.toggle('open');
+}
+
+// ============ SEARCH ENGINE ============
+// Build search index from page content
+const searchIndex = [];
+
+function buildIndex() {
+  document.querySelectorAll('.page').forEach(page => {
+    const pageId = page.id.replace('page-', '');
+    const pageTitle = page.querySelector('.book-title h2')?.textContent || pageId;
+    
+    // Index lesson blocks
+    page.querySelectorAll('.lesson-header').forEach(header => {
+      const lessonTitle = header.querySelector('h3')?.textContent || '';
+      const body = header.nextElementSibling;
+      if (!body) return;
+      const bodyText = body.textContent;
+      
+      // Index tables
+      body.querySelectorAll('table').forEach(table => {
+        const text = table.textContent;
+        searchIndex.push({ pageId, pageTitle, title: lessonTitle, snippet: text.replace(/\s+/g, ' ').slice(0, 150), element: header });
+      });
+      
+      // Index boxes
+      body.querySelectorAll('.box').forEach(box => {
+        const text = box.textContent;
+        searchIndex.push({ pageId, pageTitle, title: lessonTitle, snippet: text.replace(/\s+/g, ' ').slice(0, 150), element: header });
+      });
+      
+      // Index the lesson as a whole
+      searchIndex.push({ pageId, pageTitle, title: lessonTitle, snippet: bodyText.replace(/\s+/g, ' ').slice(0, 200), element: header });
+    });
+    
+    // Index the full page
+    searchIndex.push({ pageId, pageTitle, title: pageTitle, snippet: page.textContent.replace(/\s+/g, ' ').slice(0, 200), element: null });
+  });
+}
+
+const searchInput = document.getElementById('search-input');
+const searchResults = document.getElementById('search-results');
+const searchList = document.getElementById('search-list');
+const searchCount = document.getElementById('search-count');
+
+function highlight(text, query) {
+  if (!query) return text;
+  const re = new RegExp('(' + query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'gi');
+  return text.replace(re, '<mark class="sr-highlight">$1</mark>');
+}
+
+function doSearch(query) {
+  if (!query || query.length < 1) {
+    searchResults.classList.remove('show');
+    return;
+  }
+  
+  const q = query.toLowerCase();
+  const seen = new Set();
+  const results = [];
+  
+  for (const item of searchIndex) {
+    const key = item.pageId + '|' + item.title;
+    if (seen.has(key)) continue;
+    const combined = (item.pageTitle + ' ' + item.title + ' ' + item.snippet).toLowerCase();
+    if (combined.includes(q)) {
+      seen.add(key);
+      results.push(item);
+      if (results.length >= 25) break;
+    }
+  }
+  
+  searchList.innerHTML = '';
+  searchCount.textContent = `找到 ${results.length} 個結果`;
+  
+  if (results.length === 0) {
+    searchList.innerHTML = '<div class="sr-item"><div class="sr-snippet">找不到相關結果，請嘗試其他關鍵字</div></div>';
+  } else {
+    results.forEach(item => {
+      const div = document.createElement('div');
+      div.className = 'sr-item';
+      const snippetIdx = item.snippet.toLowerCase().indexOf(q);
+      const snipStart = Math.max(0, snippetIdx - 30);
+      const snipEnd = Math.min(item.snippet.length, snippetIdx + 80);
+      const snip = '…' + item.snippet.slice(snipStart, snipEnd) + '…';
+      div.innerHTML = `<div class="sr-tag">${highlight(item.pageTitle, query)}</div>
+        <div class="sr-title">${highlight(item.title, query)}</div>
+        <div class="sr-snippet">${highlight(snip, query)}</div>`;
+      div.onclick = () => {
+        showPage(item.pageId);
+        searchResults.classList.remove('show');
+        searchInput.value = '';
+        // Open relevant lesson
+        if (item.element) {
+          setTimeout(() => {
+            if (!item.element.classList.contains('open')) {
+              item.element.click();
+            }
+            item.element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }, 200);
+        }
+      };
+      searchList.appendChild(div);
+    });
+  }
+  
+  searchResults.classList.add('show');
+}
+
+let searchTimer;
+searchInput.addEventListener('input', e => {
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(() => doSearch(e.target.value), 200);
+});
+
+document.addEventListener('click', e => {
+  if (!searchResults.contains(e.target) && e.target !== searchInput) {
+    searchResults.classList.remove('show');
+  }
+});
+
+searchInput.addEventListener('keydown', e => {
+  if (e.key === 'Escape') searchResults.classList.remove('show');
+});
+
+// Build index after DOM loads
+window.addEventListener('load', () => {
+  setTimeout(buildIndex, 500);
+});
+</script>
+</body>
+</html>
